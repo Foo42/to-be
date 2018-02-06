@@ -1,0 +1,29 @@
+{
+  "name": "todo-to-be",
+  "version": "0.0.1",
+  "description": "todo manager",
+  "scripts": {
+    "start": "node build/src",
+    "test": "mocha build/test/bootstrap.js \"build/test/**/*.test.js\"",
+    "pretest": "npm run build",
+    "build": "tsc",
+    "prebuild": "rm -rf build && cpx 'src/**/!(*.ts)' build/src -v",
+    "dev": "nodemon -e ts,handlebars,json -i build --exec \"npm test\""
+  },
+  "author": "Julian Haeger",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/chai": "^4.0.8",
+    "@types/mocha": "^2.2.44",
+    "@types/node": "^8.5.1",
+    "chai": "^4.1.2",
+    "cpx": "^1.5.0",
+    "mocha": "^4.0.1",
+    "nodemon": "^1.12.1",
+    "ts-node": "^3.3.0",
+    "tslint": "^5.9.1",
+    "tslint-config-standard": "^7.0.0",
+    "typescript": "^2.6.2"
+  },
+  "dependencies": {}
+}

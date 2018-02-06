@@ -1,0 +1,14 @@
+{
+  "extends": [
+    "tslint-config-standard"
+  ],
+  "linterOptions": {
+    "excludes": [
+      "node_modules/*/**.ts"
+    ]
+  },
+  "rules": {
+    "no-unused-variable": false,
+    "no-unsafe-any": true
+  }
+}
