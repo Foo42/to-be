@@ -6,4 +6,9 @@ export type ChangeTitle = {
 }
 export const changeTitle = (title: string):ChangeTitle => ({type: 'changeTitle', title})
 
-export type TodoUpdate = ChangeTitle
+export type MarkCompleted = {
+  type: 'markCompleted'
+}
+export const markCompleted = ():MarkCompleted => ({type: 'markCompleted'})
+
+export type TodoUpdate = ChangeTitle | MarkCompleted
