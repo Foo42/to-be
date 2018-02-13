@@ -1,8 +1,8 @@
-import { changeTitle, markCompleted } from "../src/core/actions";
-import { assert } from "chai";
-import { applyListAction } from "../src/core/evolveList";
-import { todo } from "../src/core/todo";
-import { applyUpdate } from "../src/core/evolveItem";
+import { changeTitle, markCompleted, TodoUpdate } from '../src/core/actions'
+import { assert } from 'chai'
+import { applyListAction } from '../src/core/evolveList'
+import { todo } from '../src/core/todo'
+import { applyUpdate } from '../src/core/evolveItem'
 
 describe('item actions.', () => {
   describe('changeTitle', () => {

@@ -1,0 +1,6 @@
+- type: addToList
+  item:
+    id: a
+    title: hello world
+    complete: false
+    createdAt: 2018-02-07
