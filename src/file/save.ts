@@ -10,6 +10,6 @@ export function saveActionsToFile (actions: ListAction[], filePath: string): Pro
   return writeFile(filePath, saveActionsToYamlString(actions), 'utf8')
 }
 
-export function appendActionToFile(action: ListAction, filePath: string): Promise<void> {
-  return appendFile(filePath, saveActionsToYamlString([action]), {encoding: 'utf8'})
+export function appendActionToFile (action: ListAction, filePath: string): Promise<void> {
+  return appendFile(filePath, saveActionsToYamlString([action]), { encoding: 'utf8' })
 }

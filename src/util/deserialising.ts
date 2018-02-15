@@ -1,4 +1,4 @@
-import { isObject } from 'util'
+import { isObject, isDate, isString, isNumber } from 'util'
 
 export interface Dict<T> {
   [key: string]: T
@@ -9,6 +9,19 @@ export function isDict (x: any): x is Dict<any> {
     return true
   }
   return false
+}
+
+export function ensureDate (rawDate: any): Date {
+  if (isDate(rawDate)) {
+    return rawDate
+  }
+  if (isNumber(rawDate)) {
+    return new Date(rawDate)
+  }
+  if (isString(rawDate)) {
+    return new Date(rawDate)
+  }
+  throw new Error('Malformed date')
 }
 // export type Stringable = {
 //   toString(): string

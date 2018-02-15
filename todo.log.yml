@@ -1,0 +1,14 @@
+- type: addToList
+  item:
+    id: '1518595116496'
+    title: cli able to mark complete
+    complete: false
+    createdAt: 2018-02-14T07:58:36.497Z
+  time: 2018-02-14T07:58:36.497Z
+- type: addToList
+  item:
+    id: '1518595180914'
+    title: cli able to list todos
+    complete: false
+    createdAt: 2018-02-14T07:59:40.914Z
+  time: 2018-02-14T07:59:40.914Z

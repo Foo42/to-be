@@ -1,27 +1,34 @@
 import { Todo, deserialiseTodo } from './todo'
 import { TodoUpdate, deserialiseTodoUpdate } from './actions'
-import { isString, isObject } from 'util'
-import { Dict, isDict } from '../util/deserialising'
+import { isString, isObject, isUndefined, isDate } from 'util'
+import { Dict, isDict, ensureDate } from '../util/deserialising'
 
 export interface AddToList {
   type: 'addToList',
   item: Todo
+  time: Date
 }
-export const addToList = (item: Todo): AddToList => ({ type: 'addToList', item })
+export const addToList = (item: Todo): AddToList => ({ type: 'addToList', item, time: new Date() })
 
 export interface UpdateItemInList {
   type: 'updateItem'
   id: string
   update: TodoUpdate
+  time: Date
 }
-export const updateItemInList = (id: string, update: TodoUpdate): UpdateItemInList => ({ type: 'updateItem', id, update })
+export const updateItemInList = (id: string, update: TodoUpdate): UpdateItemInList => ({ type: 'updateItem', id, update, time: new Date() })
 
 export function deserialiseListAction (raw: Dict<any>): ListAction {
   const type = raw.type
   const item = raw.item
+  const rawTime = raw.time
   if (!isString(type)) {
-    throw new Error('malformed list action. Missing type')
+    throw new Error('malformed list action. Missing or mistyped field "type"')
   }
+  if (! isDict(rawTime)) {
+    throw new Error('malformed list action. Missing or mistyped field "time"')
+  }
+  const time = ensureDate(rawTime)
   switch (type) {
     case 'addToList': {
       if (!isDict(item)) {
@@ -29,7 +36,8 @@ export function deserialiseListAction (raw: Dict<any>): ListAction {
       }
       return {
         type,
-        item: deserialiseTodo(item)
+        item: deserialiseTodo(item),
+        time
       }
     }
     case 'updateItem': {
@@ -42,6 +50,7 @@ export function deserialiseListAction (raw: Dict<any>): ListAction {
       }
       return {
         type,
+        time,
         id: id,
         update: deserialiseTodoUpdate(update)
       }
