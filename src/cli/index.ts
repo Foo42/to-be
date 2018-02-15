@@ -6,6 +6,7 @@ import { appendActionToFile } from '../file/save'
 import { loadActionsFromFile, buildStateFromActions } from '../file/load'
 import * as path from 'path'
 import { markCompleted } from '../core/actions'
+import { allowAnyTodo, isIncomplete } from '../core/filters/index'
 
 const defaultFilePath = path.join(process.cwd(), 'todo.log.yml')
 const todoFilePath = process.env.TODO_FILE || defaultFilePath
@@ -34,9 +35,10 @@ commander
       .catch(console.error)
   })
 
-function showListFromFile (todoFilePath: string) {
+function showListFromFile (todoFilePath: string, filter = isIncomplete) {
   return loadActionsFromFile(todoFilePath)
     .then(buildStateFromActions)
+    .then(todos => todos.filter(filter))
     .then(renderTodoList)
     .then(console.log)
     .catch(console.error)

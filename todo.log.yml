@@ -22,3 +22,10 @@
   update:
     type: markCompleted
   time: 2018-02-15T07:58:13.585Z
+- type: addToList
+  item:
+    id: '1518681554664'
+    title: apply a default filter to todos in show - only show incomplete
+    complete: false
+    createdAt: 2018-02-15T07:59:14.664Z
+  time: 2018-02-15T07:59:14.664Z
