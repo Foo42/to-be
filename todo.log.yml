@@ -29,3 +29,15 @@
     complete: false
     createdAt: 2018-02-15T07:59:14.664Z
   time: 2018-02-15T07:59:14.664Z
+- type: addToList
+  item:
+    id: '1518716378210'
+    title: show list of todos to pick from when marking a todo done in the cli
+    complete: false
+    createdAt: 2018-02-15T17:39:38.210Z
+  time: 2018-02-15T17:39:38.210Z
+- type: updateItem
+  id: '1518716378210'
+  update:
+    type: markCompleted
+  time: 2018-02-15T17:40:24.694Z
