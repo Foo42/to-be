@@ -12,3 +12,13 @@
     complete: false
     createdAt: 2018-02-14T07:59:40.914Z
   time: 2018-02-14T07:59:40.914Z
+- type: updateItem
+  id: '1518595116496'
+  update:
+    type: markCompleted
+  time: 2018-02-15T07:58:03.340Z
+- type: updateItem
+  id: '1518595180914'
+  update:
+    type: markCompleted
+  time: 2018-02-15T07:58:13.585Z
