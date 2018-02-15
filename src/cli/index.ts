@@ -58,6 +58,7 @@ function userIdPicker(): Promise<string> {
           output: process.stdout
         });
         rl.question('number: ', (answer) => {
+          rl.close()
           const n = parseInt(answer)
           const todo = todos[n]
           if(todo){

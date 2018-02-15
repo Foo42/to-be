@@ -41,3 +41,15 @@
   update:
     type: markCompleted
   time: 2018-02-15T17:40:24.694Z
+- type: addToList
+  item:
+    id: '1518716585070'
+    title: ensure cli exits after using prompt to accept user in put
+    complete: false
+    createdAt: 2018-02-15T17:43:05.070Z
+  time: 2018-02-15T17:43:05.070Z
+- type: updateItem
+  id: '1518716585070'
+  update:
+    type: markCompleted
+  time: 2018-02-15T17:43:40.458Z
