@@ -20,3 +20,4 @@ Things to capture.
 * Date created
 * History? Need to think about how to capture this. Do we want to capture an event log as a primary data structure? Implementatin note: yaml is possibly well suited for an append only log since it does not require any closing (or opening) tags for an array
 * Composable contexts and filters.
+* value tags for categorising the value realised
