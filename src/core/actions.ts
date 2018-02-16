@@ -13,6 +13,12 @@ export type MarkCompleted = {
 }
 export const markCompleted = (): MarkCompleted => ({ type: 'markCompleted' })
 
+export type AddContexts = {
+  type: 'addContexts'
+  additionalContexts: string[]
+}
+export const addContexts = (additionalContexts: string[]): AddContexts => ({ type: 'addContexts', additionalContexts })
+
 export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
   const type = raw.type
   if (! isString(type)) {
@@ -39,4 +45,4 @@ export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
   }
 }
 
-export type TodoUpdate = ChangeTitle | MarkCompleted
+export type TodoUpdate = ChangeTitle | MarkCompleted | AddContexts

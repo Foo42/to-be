@@ -1,8 +1,9 @@
-import { changeTitle, markCompleted, TodoUpdate } from '../src/core/actions'
+import { changeTitle, markCompleted, TodoUpdate, addContexts } from '../src/core/actions'
 import { assert } from 'chai'
 import { applyListAction } from '../src/core/evolveList'
 import { todo } from '../src/core/todo'
 import { applyUpdate } from '../src/core/evolveItem'
+import { toASCII } from 'punycode'
 
 describe('item actions.', () => {
   describe('changeTitle', () => {
@@ -24,6 +25,16 @@ describe('item actions.', () => {
 
       assert.deepEqual(updated.complete, true)
       assert.deepEqual(original.complete, false)
+    })
+  })
+
+  describe('addContexts', () => {
+    it('should evolve item to append given contexts', () => {
+      const original = todo('123', 'do stuff')
+      original.contexts = ['originalContext', 'anotherOriginal']
+
+      const updated = applyUpdate(original, addContexts(['a new context', 'another new']))
+      assert.deepEqual(updated.contexts, ['originalContext', 'anotherOriginal', 'a new context', 'another new'])
     })
   })
 })

@@ -9,7 +9,11 @@ export function applyUpdate (original: Todo, action: TodoUpdate): Todo {
     case 'markCompleted':
       return { ...original, complete: true }
 
+    case 'addContexts':
+      return { ...original, contexts: [...original.contexts, ...action.additionalContexts] }
+
     default:
-      return original
+      const x: never = action
+      throw new Error('unsupported updated type')
   }
 }

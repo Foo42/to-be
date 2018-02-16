@@ -7,7 +7,7 @@ import { loadActionsFromFile, buildStateFromActions } from '../file/load'
 import * as path from 'path'
 import { markCompleted } from '../core/actions'
 import { allowAnyTodo, isIncomplete } from '../core/filters/index'
-import { isUndefined } from 'util';
+import { isUndefined } from 'util'
 import * as readline from 'readline'
 import * as Guid from 'guid'
 
@@ -43,8 +43,7 @@ commander
       .catch(console.error)
   })
 
-
-function userIdPicker(): Promise<string> {
+function userIdPicker (): Promise<string> {
   return loadActionsFromFile(todoFilePath)
     .then(buildStateFromActions)
     .then(todos => todos.filter(isIncomplete))
@@ -57,12 +56,12 @@ function userIdPicker(): Promise<string> {
         const rl = readline.createInterface({
           input: process.stdin,
           output: process.stdout
-        });
+        })
         rl.question('number: ', (answer) => {
           rl.close()
           const n = parseInt(answer)
           const todo = todos[n]
-          if(todo){
+          if (todo) {
             return resolve(todo.id)
           }
           return reject(new Error('Bad selection ' + n))
@@ -71,7 +70,7 @@ function userIdPicker(): Promise<string> {
     })
 }
 
-function showListFromFile(todoFilePath: string, filter = isIncomplete) {
+function showListFromFile (todoFilePath: string, filter = isIncomplete) {
   return loadActionsFromFile(todoFilePath)
     .then(buildStateFromActions)
     .then(todos => todos.filter(filter))
@@ -80,7 +79,7 @@ function showListFromFile(todoFilePath: string, filter = isIncomplete) {
     .catch(console.error)
 }
 
-function renderTodoList(todos: Todo[], showNumbers = false): string {
+function renderTodoList (todos: Todo[], showNumbers = false): string {
   const renderNumber = (i: number) => showNumbers ? `#${i} ` : ''
   return todos.map((todo, i) => `${renderNumber(i)}${todo.id}: [${todo.complete ? 'x' : ' '}] "${todo.title}"`).join('\n')
 }
