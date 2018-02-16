@@ -53,3 +53,34 @@
   update:
     type: markCompleted
   time: 2018-02-15T17:43:40.458Z
+- type: updateItem
+  id: '1518681554664'
+  update:
+    type: markCompleted
+  time: 2018-02-16T07:31:39.242Z
+- type: addToList
+  item:
+    id: '1518766342160'
+    title: switch to guids for todo ids
+    complete: false
+    createdAt: 2018-02-16T07:32:22.160Z
+  time: 2018-02-16T07:32:22.160Z
+- type: addToList
+  item:
+    id: '1518766380741'
+    title: implement contexts
+    complete: false
+    createdAt: 2018-02-16T07:33:00.741Z
+  time: 2018-02-16T07:33:00.741Z
+- type: addToList
+  item:
+    id: '1518766728498'
+    title: make installable a global npm pacakge
+    complete: false
+    createdAt: 2018-02-16T07:38:48.498Z
+  time: 2018-02-16T07:38:48.498Z
+- type: updateItem
+  id: '1518766342160'
+  update:
+    type: markCompleted
+  time: 2018-02-16T07:40:15.681Z

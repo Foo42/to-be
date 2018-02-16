@@ -9,6 +9,7 @@ import { markCompleted } from '../core/actions'
 import { allowAnyTodo, isIncomplete } from '../core/filters/index'
 import { isUndefined } from 'util';
 import * as readline from 'readline'
+import * as Guid from 'guid'
 
 const defaultFilePath = path.join(process.cwd(), 'todo.log.yml')
 const todoFilePath = process.env.TODO_FILE || defaultFilePath
@@ -17,7 +18,7 @@ commander
   .command('create <title>')
   .action((title: string) => {
     console.log('creating todo:', title)
-    const id = new Date().getTime().toString()
+    const id = Guid.raw()
     const update = addToList(todo(id, title))
     appendActionToFile(update, todoFilePath)
       .then(() => showListFromFile(todoFilePath))
