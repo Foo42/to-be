@@ -84,3 +84,23 @@
   update:
     type: markCompleted
   time: 2018-02-16T07:40:15.681Z
+- type: addToList
+  item:
+    id: efcc179c-15d8-0b6e-8e91-0b9092b2693d
+    title: impress Geoff
+    complete: false
+    createdAt: 2018-02-16T11:50:29.788Z
+    contexts: []
+  time: 2018-02-16T11:50:29.788Z
+- type: updateItem
+  id: efcc179c-15d8-0b6e-8e91-0b9092b2693d
+  update:
+    type: markCompleted
+  time: 2018-02-16T11:50:44.946Z
+- type: updateItem
+  id: '1518766380741'
+  update:
+    type: addContexts
+    additionalContexts:
+      - computer
+  time: 2018-02-19T07:53:59.387Z

@@ -5,7 +5,7 @@ import { writeFileSync, appendFileSync } from 'fs'
 import { appendActionToFile } from '../file/save'
 import { loadActionsFromFile, buildStateFromActions } from '../file/load'
 import * as path from 'path'
-import { markCompleted } from '../core/actions'
+import { markCompleted, addContexts } from '../core/actions'
 import { allowAnyTodo, isIncomplete } from '../core/filters/index'
 import { isUndefined } from 'util'
 import * as readline from 'readline'
@@ -35,7 +35,7 @@ commander
     console.log('id', id, typeof (id))
     const gettingId = id ? Promise.resolve(id) : userIdPicker()
     gettingId.then(id => {
-      console.log('you chose', id)
+      console.log(`${id} marked as done`)
       const update = updateItemInList(id, markCompleted())
       return appendActionToFile(update, todoFilePath)
     })
@@ -43,7 +43,34 @@ commander
       .catch(console.error)
   })
 
-function userIdPicker (): Promise<string> {
+commander
+  .command('edit add-context [<context>] [<id>]')
+  .action((context: string | undefined, id: string | undefined) => {
+    console.log('in context add')
+    console.log('id', id, typeof (id))
+    console.log('context', context, typeof (context))
+    const gettingId = id ? Promise.resolve(id) : userIdPicker()
+    const gettingContext = gettingId.then(() => promptInput('Context to add'))
+    Promise.all([gettingId, gettingContext]).then(([id, context]) => {
+      const update = updateItemInList(id, addContexts([context]))
+      return appendActionToFile(update, todoFilePath)
+    })
+  })
+
+function promptInput(question: string): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
+    })
+    rl.question(question + ': ', (answer) => {
+      rl.close()
+      return resolve(answer)
+    })
+  })
+}
+
+function userIdPicker(): Promise<string> {
   return loadActionsFromFile(todoFilePath)
     .then(buildStateFromActions)
     .then(todos => todos.filter(isIncomplete))
@@ -52,25 +79,18 @@ function userIdPicker (): Promise<string> {
       return todos
     })
     .then(todos => {
-      return new Promise<string>((resolve, reject) => {
-        const rl = readline.createInterface({
-          input: process.stdin,
-          output: process.stdout
-        })
-        rl.question('number: ', (answer) => {
-          rl.close()
-          const n = parseInt(answer)
-          const todo = todos[n]
-          if (todo) {
-            return resolve(todo.id)
-          }
-          return reject(new Error('Bad selection ' + n))
-        })
+      return promptInput('number').then(answer => {
+        const n = parseInt(answer)
+        const todo = todos[n]
+        if (todo) {
+          return Promise.resolve(todo.id)
+        }
+        return Promise.reject(new Error('Bad selection ' + n))
       })
     })
 }
 
-function showListFromFile (todoFilePath: string, filter = isIncomplete) {
+function showListFromFile(todoFilePath: string, filter = isIncomplete) {
   return loadActionsFromFile(todoFilePath)
     .then(buildStateFromActions)
     .then(todos => todos.filter(filter))
@@ -79,9 +99,13 @@ function showListFromFile (todoFilePath: string, filter = isIncomplete) {
     .catch(console.error)
 }
 
-function renderTodoList (todos: Todo[], showNumbers = false): string {
+function renderTodoList(todos: Todo[], showNumbers = false): string {
   const renderNumber = (i: number) => showNumbers ? `#${i} ` : ''
-  return todos.map((todo, i) => `${renderNumber(i)}${todo.id}: [${todo.complete ? 'x' : ' '}] "${todo.title}"`).join('\n')
+  return todos.map((todo, i) => {
+    const contexts = todo.contexts.map(context => `@${context}`).join(', ')
+    const doneIndicator = `[${todo.complete ? 'x' : ' '}]`
+    return `${renderNumber(i)}${todo.id}: ${doneIndicator} "${todo.title}" ${contexts}`
+  }).join('\n')
 }
 
 commander.parse(process.argv)
