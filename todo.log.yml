@@ -104,3 +104,50 @@
     additionalContexts:
       - computer
   time: 2018-02-19T07:53:59.387Z
+- type: addToList
+  item:
+    id: 7307183f-9307-0e4b-2671-9b9d472fb18b
+    title: set contexts via cli at todo create time
+    complete: false
+    createdAt: 2018-02-20T07:37:47.129Z
+    contexts: []
+  time: 2018-02-20T07:37:47.129Z
+- type: addToList
+  item:
+    id: 8a04758b-0da1-b7f6-ca24-aacd0e6630bc
+    title: filter based on current context
+    complete: false
+    createdAt: 2018-02-20T07:38:26.458Z
+    contexts: []
+  time: 2018-02-20T07:38:26.458Z
+- type: addToList
+  item:
+    id: 3d6005d9-c98f-708b-7741-7a49d5e1acea
+    title: changing todo title via cli
+    complete: false
+    createdAt: 2018-02-20T07:39:24.330Z
+    contexts: []
+  time: 2018-02-20T07:39:24.330Z
+- type: updateItem
+  id: '1518766380741'
+  update:
+    type: changeTitle
+    title: adding contexts to todos
+  time: 2018-02-28T07:57:43.865Z
+- type: updateItem
+  id: '1518766380741'
+  update:
+    type: markCompleted
+  time: 2018-02-28T08:00:15.354Z
+- type: updateItem
+  id: 7307183f-9307-0e4b-2671-9b9d472fb18b
+  update:
+    type: addContexts
+    additionalContexts:
+      - computer
+  time: 2018-02-28T08:03:45.010Z
+- type: updateItem
+  id: 3d6005d9-c98f-708b-7741-7a49d5e1acea
+  update:
+    type: markCompleted
+  time: 2018-03-01T20:06:25.974Z

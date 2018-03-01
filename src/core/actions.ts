@@ -19,7 +19,7 @@ export type AddContexts = {
 }
 export const addContexts = (additionalContexts: string[]): AddContexts => ({ type: 'addContexts', additionalContexts })
 
-export function deserialiseTodoUpdate(raw: Dict<any>): TodoUpdate {
+export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
   const type = raw.type
   if (!isString(type)) {
     throw new Error('malformed list action. Missing type')

@@ -1,4 +1,5 @@
 import * as _ from 'lodash'
+import { ParsedArgs } from './inputParser'
 
 export interface Dict<T> {
   [key: string]: T
@@ -6,11 +7,13 @@ export interface Dict<T> {
 
 const firstGroup = (pattern: RegExp) => (text: string) => (pattern.exec(text) || [])[1]
 
+export type ActionFunction = (options: ParsedArgs) => Promise<void> | void
+
 export interface CommandSpec {
   commands: string[]
   subCommands: string[]
   optionalSubCommands: string[]
-  action: Function
+  action: ActionFunction
 }
 
 export interface ParsedInput {

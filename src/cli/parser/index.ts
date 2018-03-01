@@ -1,8 +1,7 @@
-import { parseConfig, CommandSpec } from './configParser'
+import { parseConfig, CommandSpec, ActionFunction } from './configParser'
 import { ParsedArgs, parseInput } from './inputParser'
 import _ = require('lodash')
 
-type ActionFunction = (options: ParsedArgs) => void
 export class Commander {
   commands: CommandSpec[] = []
   command (definition: string) {
@@ -29,7 +28,10 @@ export class Commander {
       return
     }
     const parsed = parseInput(input, matching)
-    matching.action(parsed)
+    const actionResult = matching.action(parsed)
+    if (actionResult) {
+      actionResult.then(() => undefined, (error: Error) => console.error(error))
+    }
   }
 }
 
