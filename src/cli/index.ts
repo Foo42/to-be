@@ -118,7 +118,7 @@ function renderTodoList (todos: Todo[], showNumbers = false): string {
   return todos.map((todo, i) => {
     const contexts = todo.contexts.map(context => `@${context}`).join(', ')
     const doneIndicator = `[${todo.complete ? 'x' : ' '}]`
-    return `${renderNumber(i)}${todo.id}: ${doneIndicator} "${todo.title}" ${contexts}`
+    return `${renderNumber(i)}${doneIndicator} "${todo.title}" ${contexts}`
   }).join('\n')
 }
 

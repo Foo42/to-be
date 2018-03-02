@@ -151,3 +151,16 @@
   update:
     type: markCompleted
   time: 2018-03-01T20:06:25.974Z
+- type: addToList
+  item:
+    id: f7a7885a-9a32-76fc-3d20-bde12ecbebb2
+    title: remove todo ids in standard cli todo list view
+    complete: false
+    createdAt: 2018-03-01T20:09:23.777Z
+    contexts: []
+  time: 2018-03-01T20:09:23.777Z
+- type: updateItem
+  id: f7a7885a-9a32-76fc-3d20-bde12ecbebb2
+  update:
+    type: markCompleted
+  time: 2018-03-02T07:47:19.309Z
