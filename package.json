@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "todo manager",
   "scripts": {
-    "start": "node build/src",
+    "start": "node -r source-map-support/register build/src",
     "test": "mocha build/test/bootstrap.js \"build/test/**/*.test.js\"",
     "posttest": "tslint --project ./ --fix",
     "pretest": "npm run build",
@@ -38,6 +38,7 @@
     "fs-extra": "^5.0.0",
     "guid": "0.0.12",
     "js-yaml": "^3.10.0",
-    "lodash": "^4.17.5"
+    "lodash": "^4.17.5",
+    "source-map-support": "^0.5.3"
   }
 }

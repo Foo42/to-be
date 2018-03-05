@@ -164,3 +164,8 @@
   update:
     type: markCompleted
   time: 2018-03-02T07:47:19.309Z
+- type: updateItem
+  id: 8a04758b-0da1-b7f6-ca24-aacd0e6630bc
+  update:
+    type: markCompleted
+  time: 2018-03-05T17:23:54.186Z

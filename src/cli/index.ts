@@ -1,3 +1,4 @@
+require('source-map-support/register')
 import { Commander } from './parser'
 import { addToList, updateItemInList } from '../core/listActions'
 import { todo, Todo } from '../core/todo'
@@ -6,13 +7,16 @@ import { appendActionToFile } from '../file/save'
 import { loadActionsFromFile, buildStateFromActions } from '../file/load'
 import * as path from 'path'
 import { markCompleted, addContexts, changeTitle } from '../core/actions'
-import { allowAnyTodo, isIncomplete } from '../core/filters/index'
+import { allowAnyTodo, isIncomplete, intersectionOf, allContextsActive } from '../core/filters/index'
 import { isUndefined } from 'util'
 import * as readline from 'readline'
 import * as Guid from 'guid'
 
 const defaultFilePath = path.join(process.cwd(), 'todo.log.yml')
 const todoFilePath = process.env.TODO_FILE || defaultFilePath
+const activeContexts = (process.env.ACTIVE_CONTEXTS ? process.env.ACTIVE_CONTEXTS.split(',') : []).map(context => context.trim().toLowerCase())
+
+const defaultFilter = intersectionOf(isIncomplete, (todo) => allContextsActive(todo, activeContexts))
 
 const commander = new Commander()
 
@@ -104,7 +108,7 @@ function userIdPicker (): Promise<string> {
     })
 }
 
-function showListFromFile (todoFilePath: string, filter = isIncomplete) {
+function showListFromFile (todoFilePath: string, filter = defaultFilter) {
   return loadActionsFromFile(todoFilePath)
     .then(buildStateFromActions)
     .then(todos => todos.filter(filter))
