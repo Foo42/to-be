@@ -1,4 +1,4 @@
-import { isString, isBoolean, isDate, isUndefined, isArray } from 'util'
+import { isString, isBoolean, isDate, isUndefined, isArray, isNumber } from 'util'
 import { Dict } from '../util/deserialising'
 
 export interface Todo {
@@ -7,6 +7,7 @@ export interface Todo {
   complete: boolean
   createdAt: Date
   contexts: string[]
+  estimateMinutes?: number
 }
 
 function parseContexts (rawContexts: any): string[] {
@@ -25,7 +26,7 @@ function parseContexts (rawContexts: any): string[] {
 }
 
 export function deserialiseTodo (raw: Dict<any>): Todo {
-  const { id, title, complete, createdAt, contexts } = raw
+  const { id, title, complete, createdAt, contexts, estimateMinutes } = raw
   if (!isString(id)) {
     throw new Error('missing or malformed id')
   }
@@ -38,6 +39,9 @@ export function deserialiseTodo (raw: Dict<any>): Todo {
   if (!isString(createdAt) && !isDate(createdAt)) {
     throw new Error('missing or malformed createdAt')
   }
+  if (!isUndefined(estimateMinutes) && !isNumber(estimateMinutes)) {
+    throw new Error('mis-typed field "estimateMinutes. Should be numeric."')
+  }
 
   const parsedCreatedAt = isDate(createdAt) ? createdAt : new Date(Date.parse(createdAt))
   return {
@@ -45,7 +49,8 @@ export function deserialiseTodo (raw: Dict<any>): Todo {
     title,
     complete,
     createdAt: parsedCreatedAt,
-    contexts: parseContexts(contexts)
+    contexts: parseContexts(contexts),
+    estimateMinutes
   }
 }
 
@@ -55,6 +60,7 @@ export function todo (id: string, title: string): Todo {
     title,
     complete: false,
     createdAt: new Date(),
-    contexts: []
+    contexts: [],
+    estimateMinutes: undefined
   }
 }

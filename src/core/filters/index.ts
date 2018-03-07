@@ -10,7 +10,6 @@ export function allowAnyTodo (todo: Todo): true {
 
 export function allContextsActive (todo: Todo, activeContexts: string[]): boolean {
   const required = todo.contexts.map(context => context.toLowerCase())
-  console.log(`todo: ${todo.title} requires ${todo.contexts}. Active = ${activeContexts}. Result = ${required.every(context => activeContexts.includes(context))}`)
   return required.every(context => activeContexts.includes(context))
 }
 

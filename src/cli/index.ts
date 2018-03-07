@@ -6,7 +6,7 @@ import { writeFileSync, appendFileSync } from 'fs'
 import { appendActionToFile } from '../file/save'
 import { loadActionsFromFile, buildStateFromActions } from '../file/load'
 import * as path from 'path'
-import { markCompleted, addContexts, changeTitle } from '../core/actions'
+import { markCompleted, addContexts, changeTitle, setEstimate } from '../core/actions'
 import { allowAnyTodo, isIncomplete, intersectionOf, allContextsActive } from '../core/filters/index'
 import { isUndefined } from 'util'
 import * as readline from 'readline'
@@ -75,6 +75,22 @@ commander
     })
   })
 
+
+commander
+  .command('edit set-estimate [<estimate>] [<id>]')
+  .action((options) => {
+    const { estimate, id } = options.allSubCommands
+    const gettingId = id ? Promise.resolve(id) : userIdPicker()
+    const gettingEstimate = estimate ? Promise.resolve(estimate) : gettingId.then(() => promptInput('Estimate in minutes'))
+    return Promise.all([gettingId, gettingEstimate]).then(([id, estimateString]) => {
+      const estimateInMinutes = parseInt(estimateString)
+      const update = updateItemInList(id, setEstimate(estimateInMinutes))
+      return appendActionToFile(update, todoFilePath)
+    })
+  })
+
+
+
 function promptInput (question: string): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     const rl = readline.createInterface({
@@ -120,9 +136,19 @@ function showListFromFile (todoFilePath: string, filter = defaultFilter) {
 function renderTodoList (todos: Todo[], showNumbers = false): string {
   const renderNumber = (i: number) => showNumbers ? `#${i} ` : ''
   return todos.map((todo, i) => {
-    const contexts = todo.contexts.map(context => `@${context}`).join(', ')
-    const doneIndicator = `[${todo.complete ? 'x' : ' '}]`
-    return `${renderNumber(i)}${doneIndicator} "${todo.title}" ${contexts}`
+    const parts: string[] = []
+    if(showNumbers){
+      parts.push(`#${i}`)
+    }
+    parts.push(`[${todo.complete ? 'x' : ' '}]`)
+    parts.push(todo.title)
+    if(todo.contexts.length){
+      parts.push(todo.contexts.map(context => `@${context}`).join(', '))
+    }
+    if(todo.estimateMinutes){
+      parts.push(`[${todo.estimateMinutes} mins]`)
+    }
+    return parts.join(' ')
   }).join('\n')
 }
 

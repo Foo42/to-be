@@ -12,6 +12,9 @@ export function applyUpdate (original: Todo, action: TodoUpdate): Todo {
     case 'addContexts':
       return { ...original, contexts: [...original.contexts, ...action.additionalContexts] }
 
+    case 'setEstimate':
+      return { ...original, estimateMinutes: action.minutes }
+
     default:
       const x: never = action
       throw new Error('unsupported updated type')

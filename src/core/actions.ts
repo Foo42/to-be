@@ -1,6 +1,6 @@
 import { Todo } from './todo'
 import { Dict } from '../util/deserialising'
-import { isString, isArray } from 'util'
+import { isString, isArray, isNumber } from 'util'
 
 export type ChangeTitle = {
   type: 'changeTitle'
@@ -18,6 +18,12 @@ export type AddContexts = {
   additionalContexts: string[]
 }
 export const addContexts = (additionalContexts: string[]): AddContexts => ({ type: 'addContexts', additionalContexts })
+
+export type SetEstimate = {
+  type: 'setEstimate'
+  minutes: number
+}
+export const setEstimate = (minutes: number): SetEstimate => ({ type: 'setEstimate', minutes })
 
 export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
   const type = raw.type
@@ -57,9 +63,17 @@ export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
       }
     }
 
+    case 'setEstimate': {
+      const rawMinutes = raw.minutes
+      if (!isNumber(rawMinutes)) {
+        throw new Error('Malformed setEstimate update. Missing or mis-typed field "minutes"')
+      }
+      return setEstimate(rawMinutes)
+    }
+
     default:
       throw new Error(`Malformed todo update type: '${type}'`)
   }
 }
 
-export type TodoUpdate = ChangeTitle | MarkCompleted | AddContexts
+export type TodoUpdate = ChangeTitle | MarkCompleted | AddContexts | SetEstimate

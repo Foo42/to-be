@@ -169,3 +169,38 @@
   update:
     type: markCompleted
   time: 2018-03-05T17:23:54.186Z
+- type: addToList
+  item:
+    id: c2bfff40-9f18-be08-2582-55278c9066b1
+    title: add a parent to a todo
+    complete: false
+    createdAt: 2018-03-07T07:34:22.810Z
+    contexts: []
+  time: 2018-03-07T07:34:22.810Z
+- type: addToList
+  item:
+    id: b9bfe434-ce56-5a10-13e4-9a31ced27c29
+    title: add time estimates
+    complete: false
+    createdAt: 2018-03-07T07:34:46.604Z
+    contexts: []
+  time: 2018-03-07T07:34:46.604Z
+- type: addToList
+  item:
+    id: 1fc36587-6e15-4de3-d747-f3b65c9b6366
+    title: filter by available time
+    complete: false
+    createdAt: 2018-03-07T07:34:57.675Z
+    contexts: []
+  time: 2018-03-07T07:34:57.675Z
+- type: updateItem
+  id: 1fc36587-6e15-4de3-d747-f3b65c9b6366
+  update:
+    type: setEstimate
+    minutes: 15
+  time: 2018-03-07T17:23:30.810Z
+- type: updateItem
+  id: b9bfe434-ce56-5a10-13e4-9a31ced27c29
+  update:
+    type: markCompleted
+  time: 2018-03-07T17:24:36.742Z

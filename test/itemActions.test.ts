@@ -1,4 +1,4 @@
-import { changeTitle, markCompleted, TodoUpdate, addContexts } from '../src/core/actions'
+import { changeTitle, markCompleted, TodoUpdate, addContexts, setEstimate } from '../src/core/actions'
 import { assert } from 'chai'
 import { applyListAction } from '../src/core/evolveList'
 import { todo } from '../src/core/todo'
@@ -37,4 +37,15 @@ describe('item actions.', () => {
       assert.deepEqual(updated.contexts, ['originalContext', 'anotherOriginal', 'a new context', 'another new'])
     })
   })
+
+  describe('setEstimate', () => {
+    it('should set a time estimate', () => {
+      const original = todo('123', 'do stuff')
+      const updated = applyUpdate(original, setEstimate(5))
+
+      assert.deepEqual(updated.estimateMinutes, 5)
+      assert.deepEqual(original.estimateMinutes, undefined)
+    })
+  })
+
 })
