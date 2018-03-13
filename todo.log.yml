@@ -204,3 +204,16 @@
   update:
     type: markCompleted
   time: 2018-03-07T17:24:36.742Z
+- type: addToList
+  item:
+    id: 66006581-cbf9-b934-2865-ca1eb2b88f46
+    title: ability to parse options flags in cli
+    complete: false
+    createdAt: 2018-03-13T07:30:50.349Z
+    contexts: []
+  time: 2018-03-13T07:30:50.349Z
+- type: updateItem
+  id: 66006581-cbf9-b934-2865-ca1eb2b88f46
+  update:
+    type: markCompleted
+  time: 2018-03-13T17:43:24.934Z

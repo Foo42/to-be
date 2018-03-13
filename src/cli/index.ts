@@ -75,7 +75,6 @@ commander
     })
   })
 
-
 commander
   .command('edit set-estimate [<estimate>] [<id>]')
   .action((options) => {
@@ -83,13 +82,11 @@ commander
     const gettingId = id ? Promise.resolve(id) : userIdPicker()
     const gettingEstimate = estimate ? Promise.resolve(estimate) : gettingId.then(() => promptInput('Estimate in minutes'))
     return Promise.all([gettingId, gettingEstimate]).then(([id, estimateString]) => {
-      const estimateInMinutes = parseInt(estimateString)
+      const estimateInMinutes = parseInt(estimateString, 10)
       const update = updateItemInList(id, setEstimate(estimateInMinutes))
       return appendActionToFile(update, todoFilePath)
     })
   })
-
-
 
 function promptInput (question: string): Promise<string> {
   return new Promise<string>((resolve, reject) => {
@@ -137,15 +134,15 @@ function renderTodoList (todos: Todo[], showNumbers = false): string {
   const renderNumber = (i: number) => showNumbers ? `#${i} ` : ''
   return todos.map((todo, i) => {
     const parts: string[] = []
-    if(showNumbers){
+    if (showNumbers) {
       parts.push(`#${i}`)
     }
     parts.push(`[${todo.complete ? 'x' : ' '}]`)
     parts.push(todo.title)
-    if(todo.contexts.length){
+    if (todo.contexts.length) {
       parts.push(todo.contexts.map(context => `@${context}`).join(', '))
     }
-    if(todo.estimateMinutes){
+    if (todo.estimateMinutes) {
       parts.push(`[${todo.estimateMinutes} mins]`)
     }
     return parts.join(' ')

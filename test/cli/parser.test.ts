@@ -31,6 +31,31 @@ describe('parser', () => {
       expect(parsed).to.deep.include(expected)
     })
     commander.parseArgv(commandline)
+  })
 
+  it('should collect flags regardless of position', () => {
+    const commandline = ['node', '/path/script.js', '--foo', 'edit', '--tag', 'something', 'todo', 'set', 'title', '--bar', 'banana']
+    const expected: Partial<ParsedArgs> = {
+      commands: ['edit', 'todo', 'set'],
+      allSubCommands: {
+        what: 'title',
+        newValue: 'banana'
+      },
+      flags: {
+        foo: 'true',
+        bar: 'true',
+        tag: 'something'
+      }
+    }
+    const commander = new Commander()
+    commander
+      .command('edit todo set <what> [<newValue>]')
+      .option('foo')
+      .option('bar')
+      .option('tag', true)
+      .action(parsed => {
+        expect(parsed).to.deep.include(expected)
+      })
+    commander.parseArgv(commandline)
   })
 })

@@ -9,22 +9,28 @@ const firstGroup = (pattern: RegExp) => (text: string) => (pattern.exec(text) ||
 
 export type ActionFunction = (options: ParsedArgs) => Promise<void> | void
 
+export interface FlagSpec {
+  name: string,
+  requiresValue: boolean
+}
 export interface CommandSpec {
   commands: string[]
   subCommands: string[]
   optionalSubCommands: string[]
   action: ActionFunction
+  flags: FlagSpec[]
 }
 
 export interface ParsedInput {
   commands: string[]
   subCommands: Dict<string>
+  flags: Dict<string>
 }
 
 export function parseConfig (config: string): CommandSpec {
   const parts = config.split(' ')
   const commands = _.takeWhile(parts, part => /^\w/.test(part))
-  return { action: () => undefined, commands, ...parseConfigAfterCommands(parts.slice(commands.length)) }
+  return { action: () => undefined, commands, ...parseConfigAfterCommands(parts.slice(commands.length)), flags: [] }
 }
 
 function parseConfigAfterCommands (config: string[]) {
