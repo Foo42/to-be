@@ -222,3 +222,19 @@
   update:
     type: markCompleted
   time: 2018-03-14T07:48:01.222Z
+- type: addToList
+  item:
+    id: 17b9076a-55e1-bb23-35f8-140931f4b6c4
+    title: add due date to tasks
+    complete: false
+    createdAt: 2018-03-14T07:50:53.171Z
+    contexts: []
+  time: 2018-03-14T07:50:53.171Z
+- type: addToList
+  item:
+    id: c2407a7d-d549-01ab-b0f5-6c7ef78fe747
+    title: tasks blocked by other tasks
+    complete: false
+    createdAt: 2018-03-14T07:51:19.448Z
+    contexts: []
+  time: 2018-03-14T07:51:19.448Z
