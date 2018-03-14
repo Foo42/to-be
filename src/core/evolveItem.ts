@@ -15,6 +15,9 @@ export function applyUpdate (original: Todo, action: TodoUpdate): Todo {
     case 'setEstimate':
       return { ...original, estimateMinutes: action.minutes }
 
+    case 'setParentTask':
+      return { ...original, parentTaskId: action.parentTaskId }
+
     default:
       const x: never = action
       throw new Error('unsupported updated type')

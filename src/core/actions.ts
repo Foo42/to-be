@@ -25,6 +25,12 @@ export type SetEstimate = {
 }
 export const setEstimate = (minutes: number): SetEstimate => ({ type: 'setEstimate', minutes })
 
+export type SetParentTask = {
+  type: 'setParentTask'
+  parentTaskId: string
+}
+export const setParentTask = (parentTaskId: string): SetParentTask => ({ type: 'setParentTask', parentTaskId })
+
 export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
   const type = raw.type
   if (!isString(type)) {
@@ -71,9 +77,17 @@ export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
       return setEstimate(rawMinutes)
     }
 
+    case 'setParentTask': {
+      const { parentTaskId } = raw
+      if (!isString(parentTaskId)) {
+        throw new Error('Malformed setParentTask update. Missing or mis-typed field "parentTaskId"')
+      }
+      return setParentTask(parentTaskId)
+    }
+
     default:
       throw new Error(`Malformed todo update type: '${type}'`)
   }
 }
 
-export type TodoUpdate = ChangeTitle | MarkCompleted | AddContexts | SetEstimate
+export type TodoUpdate = ChangeTitle | MarkCompleted | AddContexts | SetEstimate | SetParentTask

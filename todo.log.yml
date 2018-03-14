@@ -238,3 +238,36 @@
     createdAt: 2018-03-14T07:51:19.448Z
     contexts: []
   time: 2018-03-14T07:51:19.448Z
+- type: addToList
+  item:
+    id: fdcbe752-9e6e-d5dc-891d-0cecbf7b6881
+    title: nested todos
+    complete: false
+    createdAt: 2018-03-14T17:22:54.987Z
+    contexts: []
+  time: 2018-03-14T17:22:54.987Z
+- type: updateItem
+  id: c2bfff40-9f18-be08-2582-55278c9066b1
+  update:
+    type: setParentTask
+    parentTaskId: fdcbe752-9e6e-d5dc-891d-0cecbf7b6881
+  time: 2018-03-14T17:23:25.850Z
+- type: addToList
+  item:
+    id: 1d2149b1-1f35-65ce-7ee5-4b2910ea83f1
+    title: display nested todos in a tree in cli list
+    complete: false
+    createdAt: 2018-03-14T17:24:08.425Z
+    contexts: []
+  time: 2018-03-14T17:24:08.425Z
+- type: updateItem
+  id: 1d2149b1-1f35-65ce-7ee5-4b2910ea83f1
+  update:
+    type: setParentTask
+    parentTaskId: fdcbe752-9e6e-d5dc-891d-0cecbf7b6881
+  time: 2018-03-14T17:24:27.164Z
+- type: updateItem
+  id: c2bfff40-9f18-be08-2582-55278c9066b1
+  update:
+    type: markCompleted
+  time: 2018-03-14T17:24:52.715Z
