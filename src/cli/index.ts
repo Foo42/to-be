@@ -7,8 +7,8 @@ import { appendActionToFile } from '../file/save'
 import { loadActionsFromFile, buildStateFromActions } from '../file/load'
 import * as path from 'path'
 import { markCompleted, addContexts, changeTitle, setEstimate } from '../core/actions'
-import { allowAnyTodo, isIncomplete, intersectionOf, allContextsActive } from '../core/filters/index'
-import { isUndefined } from 'util'
+import { allowAnyTodo, isIncomplete, intersectionOf, allContextsActive, noLongerThan } from '../core/filters/index'
+import { isUndefined, isString } from 'util'
 import * as readline from 'readline'
 import * as Guid from 'guid'
 
@@ -34,7 +34,17 @@ commander
 
 commander
   .command('list')
-  .action(() => showListFromFile(todoFilePath))
+  .option('available-time', true)
+  .action(({ flags }) => {
+    let filter = defaultFilter
+    const timeString = flags['available-time']
+    if (isString(timeString)) {
+      const minutes = parseInt(timeString, 10)
+      console.log(`Exluding tasks with estimates longer than ${minutes} minutes`)
+      filter = intersectionOf(defaultFilter, noLongerThan(minutes))
+    }
+    return showListFromFile(todoFilePath, filter)
+  })
 
 commander
   .command('done [<id>]')
@@ -88,7 +98,7 @@ commander
     })
   })
 
-function promptInput (question: string): Promise<string> {
+function promptInput(question: string): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     const rl = readline.createInterface({
       input: process.stdin,
@@ -101,7 +111,7 @@ function promptInput (question: string): Promise<string> {
   })
 }
 
-function userIdPicker (): Promise<string> {
+function userIdPicker(): Promise<string> {
   return loadActionsFromFile(todoFilePath)
     .then(buildStateFromActions)
     .then(todos => todos.filter(isIncomplete))
@@ -121,7 +131,7 @@ function userIdPicker (): Promise<string> {
     })
 }
 
-function showListFromFile (todoFilePath: string, filter = defaultFilter) {
+function showListFromFile(todoFilePath: string, filter = defaultFilter) {
   return loadActionsFromFile(todoFilePath)
     .then(buildStateFromActions)
     .then(todos => todos.filter(filter))
@@ -130,7 +140,7 @@ function showListFromFile (todoFilePath: string, filter = defaultFilter) {
     .catch(console.error)
 }
 
-function renderTodoList (todos: Todo[], showNumbers = false): string {
+function renderTodoList(todos: Todo[], showNumbers = false): string {
   const renderNumber = (i: number) => showNumbers ? `#${i} ` : ''
   return todos.map((todo, i) => {
     const parts: string[] = []
