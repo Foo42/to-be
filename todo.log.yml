@@ -271,3 +271,36 @@
   update:
     type: markCompleted
   time: 2018-03-14T17:24:52.715Z
+- type: addToList
+  item:
+    id: a318d7b5-3520-915f-dda7-a890fc196c3d
+    title: filter todos with children out of flat-list
+    complete: false
+    createdAt: 2018-03-15T13:30:29.862Z
+    contexts: []
+  time: 2018-03-15T13:30:29.863Z
+- type: updateItem
+  id: a318d7b5-3520-915f-dda7-a890fc196c3d
+  update:
+    type: setParentTask
+    parentTaskId: fdcbe752-9e6e-d5dc-891d-0cecbf7b6881
+  time: 2018-03-15T13:30:58.061Z
+- type: updateItem
+  id: 1d2149b1-1f35-65ce-7ee5-4b2910ea83f1
+  update:
+    type: markCompleted
+  time: 2018-03-16T07:40:11.521Z
+- type: addToList
+  item:
+    id: f859b217-84be-b0bb-8a27-97a87364ce1d
+    title: ability to use todo tree as numbered picker
+    complete: false
+    createdAt: 2018-03-16T07:40:50.201Z
+    contexts: []
+  time: 2018-03-16T07:40:50.201Z
+- type: updateItem
+  id: f859b217-84be-b0bb-8a27-97a87364ce1d
+  update:
+    type: setParentTask
+    parentTaskId: fdcbe752-9e6e-d5dc-891d-0cecbf7b6881
+  time: 2018-03-16T07:41:13.994Z

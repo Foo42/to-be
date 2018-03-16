@@ -11,6 +11,9 @@ import { allowAnyTodo, isIncomplete, intersectionOf, allContextsActive, noLonger
 import { isUndefined, isString } from 'util'
 import * as readline from 'readline'
 import * as Guid from 'guid'
+import { NOTFOUND } from 'dns';
+import { TreeNode, buildTodoTree } from '../core/tree';
+import { flatMap } from 'lodash';
 
 const defaultFilePath = path.join(process.cwd(), 'todo.log.yml')
 const todoFilePath = process.env.TODO_FILE || defaultFilePath
@@ -30,6 +33,12 @@ commander
     appendActionToFile(update, todoFilePath)
       .then(() => showListFromFile(todoFilePath))
       .catch(console.error)
+  })
+
+commander
+  .command('tree')
+  .action(({ flags }) => {
+    return showTreeFromFile(todoFilePath)
   })
 
 commander
@@ -110,9 +119,7 @@ commander
     })
   })
 
-
-
-function promptInput (question: string): Promise<string> {
+function promptInput(question: string): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     const rl = readline.createInterface({
       input: process.stdin,
@@ -125,7 +132,7 @@ function promptInput (question: string): Promise<string> {
   })
 }
 
-function todoIdPicker (prompt = 'number'): Promise<string> {
+function todoIdPicker(prompt = 'number'): Promise<string> {
   return loadActionsFromFile(todoFilePath)
     .then(buildStateFromActions)
     .then(todos => todos.filter(isIncomplete))
@@ -145,7 +152,7 @@ function todoIdPicker (prompt = 'number'): Promise<string> {
     })
 }
 
-function showListFromFile (todoFilePath: string, filter = defaultFilter) {
+function showListFromFile(todoFilePath: string, filter = defaultFilter) {
   return loadActionsFromFile(todoFilePath)
     .then(buildStateFromActions)
     .then(todos => todos.filter(filter))
@@ -154,23 +161,48 @@ function showListFromFile (todoFilePath: string, filter = defaultFilter) {
     .catch(console.error)
 }
 
-function renderTodoList (todos: Todo[], showNumbers = false): string {
-  const renderNumber = (i: number) => showNumbers ? `#${i} ` : ''
+function showTreeFromFile(todoFilePath: string, filter = defaultFilter) {
+  return loadActionsFromFile(todoFilePath)
+    .then(buildStateFromActions)
+    .then(todos => todos.filter(filter))
+    .then(todos => buildTodoTree(todos))
+    .then(renderTodoTree)
+    .then(console.log)
+    .catch(console.error)
+}
+
+function renderTodoList(todos: Todo[], showNumbers = false): string {
   return todos.map((todo, i) => {
-    const parts: string[] = []
-    if (showNumbers) {
-      parts.push(`#${i}`)
-    }
-    parts.push(`[${todo.complete ? 'x' : ' '}]`)
-    parts.push(todo.title)
-    if (todo.contexts.length) {
-      parts.push(todo.contexts.map(context => `@${context}`).join(', '))
-    }
-    if (todo.estimateMinutes) {
-      parts.push(`[${todo.estimateMinutes} mins]`)
-    }
-    return parts.join(' ')
+    const prefix = showNumbers ?  `#${i}` : ''
+    return renderTodo(todo, prefix)
   }).join('\n')
+}
+
+function preRenderTodoTree(todos: TreeNode<Todo>[], prefix = ''): string[] {
+  const indent = '  '
+  return flatMap(todos, (todo, i) => {
+    return [renderTodo(todo, prefix), ...preRenderTodoTree(todo.children, prefix + indent)]
+  })
+}
+function renderTodoTree(todos: TreeNode<Todo>[]): string {
+  return preRenderTodoTree(todos).join('\n')
+}
+
+function renderTodo(todo: Todo, prefix?: string): string {
+  const parts: string[] = []
+  if(prefix){
+    parts.push(prefix)
+  }
+  parts.push(`[${todo.complete ? 'x' : ' '}]`)
+  parts.push(todo.title)
+  if (todo.contexts.length) {
+    parts.push(todo.contexts.map(context => `@${context}`).join(', '))
+  }
+  if (todo.estimateMinutes) {
+    parts.push(`[${todo.estimateMinutes} mins]`)
+  }
+  return parts.join(' ')
+
 }
 
 commander.parseArgv(process.argv)
