@@ -10,7 +10,8 @@ describe('filters.', () => {
         id: 'something',
         complete: false,
         createdAt: new Date(),
-        contexts: []
+        contexts: [],
+        tags: []
       }
       const activeContexts: string[] = []
       expect(allContextsActive(todo, activeContexts)).to.eql(true)
@@ -22,7 +23,8 @@ describe('filters.', () => {
         id: 'something',
         complete: false,
         createdAt: new Date(),
-        contexts: ['business-hours']
+        contexts: ['business-hours'],
+        tags: []
       }
       const activeContexts: string[] = []
       expect(allContextsActive(todo, activeContexts)).to.eql(false)
@@ -36,7 +38,8 @@ describe('filters.', () => {
         id: 'something',
         complete: false,
         createdAt: new Date(),
-        contexts: []
+        contexts: [],
+        tags: []
       }
       expect(noLongerThan(1)(todo)).to.eql(true)
     })
@@ -48,6 +51,7 @@ describe('filters.', () => {
         complete: false,
         createdAt: new Date(),
         contexts: [],
+        tags: [],
         estimateMinutes: 1
       }
       expect(noLongerThan(2)(todo)).to.eql(true)
@@ -60,6 +64,7 @@ describe('filters.', () => {
         complete: false,
         createdAt: new Date(),
         contexts: [],
+        tags: [],
         estimateMinutes: 2
       }
       expect(noLongerThan(2)(todo)).to.eql(true)
@@ -72,6 +77,7 @@ describe('filters.', () => {
         complete: false,
         createdAt: new Date(),
         contexts: [],
+        tags: [],
         estimateMinutes: 3
       }
       expect(noLongerThan(2)(todo)).to.eql(false)

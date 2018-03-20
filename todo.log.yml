@@ -304,3 +304,44 @@
     type: setParentTask
     parentTaskId: fdcbe752-9e6e-d5dc-891d-0cecbf7b6881
   time: 2018-03-16T07:41:13.994Z
+- type: updateItem
+  id: f859b217-84be-b0bb-8a27-97a87364ce1d
+  update:
+    type: markCompleted
+  time: 2018-03-20T18:24:09.705Z
+- type: addToList
+  item:
+    id: 77a62392-96ab-1cd2-0318-16724b975739
+    title: add tags to task
+    complete: false
+    createdAt: 2018-03-20T18:24:40.740Z
+    contexts: []
+    tags: []
+  time: 2018-03-20T18:24:40.740Z
+- type: updateItem
+  id: 77a62392-96ab-1cd2-0318-16724b975739
+  update:
+    type: addTags
+    tags:
+      - name: parity
+  time: 2018-03-20T18:25:12.387Z
+- type: addToList
+  item:
+    id: 715fee6e-67cb-1c7f-1c76-b3b77dfed14e
+    title: render tags in listings
+    complete: false
+    createdAt: 2018-03-20T18:25:42.981Z
+    contexts: []
+    tags: []
+    parentTaskId: 77a62392-96ab-1cd2-0318-16724b975739
+  time: 2018-03-20T18:25:42.981Z
+- type: updateItem
+  id: 715fee6e-67cb-1c7f-1c76-b3b77dfed14e
+  update:
+    type: markCompleted
+  time: 2018-03-20T18:27:09.806Z
+- type: updateItem
+  id: 77a62392-96ab-1cd2-0318-16724b975739
+  update:
+    type: markCompleted
+  time: 2018-03-20T18:27:16.834Z

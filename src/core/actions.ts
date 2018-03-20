@@ -1,5 +1,5 @@
 import { Todo } from './todo'
-import { Dict } from '../util/deserialising'
+import { Dict, isDict } from '../util/deserialising'
 import { isString, isArray, isNumber } from 'util'
 
 export type ChangeTitle = {
@@ -30,6 +30,12 @@ export type SetParentTask = {
   parentTaskId: string
 }
 export const setParentTask = (parentTaskId: string): SetParentTask => ({ type: 'setParentTask', parentTaskId })
+
+export type AddTags = {
+  type: 'addTags'
+  tags: {name: string}[]
+}
+export const addTags = (tags: {name: string}[]): AddTags => ({ type: 'addTags', tags })
 
 export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
   const type = raw.type
@@ -69,6 +75,24 @@ export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
       }
     }
 
+    case 'addTags': {
+      const rawTags = raw.tags
+      if (!isArray(rawTags)) {
+        throw new Error('Malformed addTags. Missing or mis-typed field "tags"')
+      }
+      const newTags = rawTags.map(rawTag => {
+        if (!isDict(rawTag)) {
+          throw new Error('Malformed tag in array')
+        }
+        const rawTagName = rawTag.name
+        if (isString(rawTagName)) {
+          return { name: rawTagName }
+        }
+        throw new Error('non-string tag name in array')
+      })
+      return addTags(newTags)
+    }
+
     case 'setEstimate': {
       const rawMinutes = raw.minutes
       if (!isNumber(rawMinutes)) {
@@ -90,4 +114,4 @@ export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
   }
 }
 
-export type TodoUpdate = ChangeTitle | MarkCompleted | AddContexts | SetEstimate | SetParentTask
+export type TodoUpdate = ChangeTitle | MarkCompleted | AddContexts | SetEstimate | SetParentTask | AddTags

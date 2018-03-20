@@ -1,4 +1,4 @@
-import { changeTitle, markCompleted, TodoUpdate, addContexts, setEstimate, setParentTask } from '../src/core/actions'
+import { changeTitle, markCompleted, TodoUpdate, addContexts, setEstimate, setParentTask, addTags } from '../src/core/actions'
 import { assert } from 'chai'
 import { applyListAction } from '../src/core/evolveList'
 import { todo } from '../src/core/todo'
@@ -56,6 +56,16 @@ describe('item actions.', () => {
 
       assert.deepEqual(updated.parentTaskId, parent.id)
       assert.deepEqual(original.parentTaskId, undefined)
+    })
+  })
+
+  describe('addTags', () => {
+    it('should evolve item to append given tags', () => {
+      const original = todo('123', 'do stuff')
+      original.tags = [{ name: 'stuff' }, { name: 'things' }]
+
+      const updated = applyUpdate(original, addTags([{ name: 'foo' }, { name: 'bar' }]))
+      assert.deepEqual(updated.tags, [{ name: 'stuff' }, { name: 'things' }, { name: 'foo' }, { name: 'bar' }])
     })
   })
 

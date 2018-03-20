@@ -12,8 +12,8 @@ describe('todo tree', () => {
 
     it('should return a flat list of items without children for an input list without parents', () => {
       const input: Todo[] = [
-        { id: 'a', title: 'a', complete: false, createdAt: new Date(), contexts: [] },
-        { id: 'b', title: 'b', complete: false, createdAt: new Date(), contexts: [] }
+        { id: 'a', title: 'a', complete: false, createdAt: new Date(), contexts: [], tags: [] },
+        { id: 'b', title: 'b', complete: false, createdAt: new Date(), contexts: [], tags: [] }
       ]
       const output = buildTodoTree(input)
       const expectedOutput = input.map(withEmptyChildList)
@@ -21,8 +21,8 @@ describe('todo tree', () => {
     })
 
     it('should include todos with a parent within the parents child array', () => {
-      const parentTodo = { id: 'a', title: 'I am a parent', complete: false, createdAt: new Date(), contexts: [] }
-      const childTodo = { id: 'b', title: 'I am a child', parentTaskId: 'a', complete: false, createdAt: new Date(), contexts: [] }
+      const parentTodo = { id: 'a', title: 'I am a parent', complete: false, createdAt: new Date(), contexts: [], tags: [] }
+      const childTodo = { id: 'b', title: 'I am a child', parentTaskId: 'a', complete: false, createdAt: new Date(), contexts: [], tags: [] }
       const input: Todo[] = [
         parentTodo,
         childTodo
@@ -35,8 +35,8 @@ describe('todo tree', () => {
     })
 
     it('should not include todos with a parent in the root list', () => {
-      const parentTodo = { id: 'a', title: 'I am a parent', complete: false, createdAt: new Date(), contexts: [] }
-      const childTodo = { id: 'b', title: 'I am a child', parentTaskId: 'a', complete: false, createdAt: new Date(), contexts: [] }
+      const parentTodo = { id: 'a', title: 'I am a parent', complete: false, createdAt: new Date(), contexts: [], tags: [] }
+      const childTodo = { id: 'b', title: 'I am a child', parentTaskId: 'a', complete: false, createdAt: new Date(), contexts: [], tags: [] }
       const input: Todo[] = [
         parentTodo,
         childTodo

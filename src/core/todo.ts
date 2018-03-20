@@ -1,5 +1,5 @@
 import { isString, isBoolean, isDate, isUndefined, isArray, isNumber } from 'util'
-import { Dict } from '../util/deserialising'
+import { Dict, isDict } from '../util/deserialising'
 
 export interface Todo {
   id: string
@@ -7,6 +7,7 @@ export interface Todo {
   complete: boolean
   createdAt: Date
   contexts: string[]
+  tags: {name: string}[]
   estimateMinutes?: number
   parentTaskId?: string
 }
@@ -26,8 +27,27 @@ function parseContexts (rawContexts: any): string[] {
   })
 }
 
+function parseTags (rawTags: any): {name: string}[] {
+  if (isUndefined(rawTags)) {
+    return []
+  }
+  if (!isArray(rawTags)) {
+    throw new Error('malformed tags')
+  }
+  return (rawTags).map(rawTag => {
+    if (!isDict(rawTag)) {
+      throw new Error('Malformed tag in array')
+    }
+    const rawTagName = rawTag.name
+    if (isString(rawTagName)) {
+      return { name: rawTagName }
+    }
+    throw new Error('malformed tag')
+  })
+}
+
 export function deserialiseTodo (raw: Dict<any>): Todo {
-  const { id, title, complete, createdAt, contexts, estimateMinutes, parentTaskId } = raw
+  const { id, title, complete, createdAt, contexts, estimateMinutes, parentTaskId, tags } = raw
   if (!isString(id)) {
     throw new Error('missing or malformed id')
   }
@@ -54,6 +74,7 @@ export function deserialiseTodo (raw: Dict<any>): Todo {
     complete,
     createdAt: parsedCreatedAt,
     contexts: parseContexts(contexts),
+    tags: parseTags(tags),
     estimateMinutes,
     parentTaskId
   }
@@ -66,6 +87,7 @@ export function todo (id: string, title: string): Todo {
     complete: false,
     createdAt: new Date(),
     contexts: [],
+    tags: [],
     estimateMinutes: undefined,
     parentTaskId: undefined
   }
