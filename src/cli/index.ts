@@ -25,24 +25,35 @@ const commander = new Commander()
 
 commander
   .command('create <title>')
-  .action((options) => {
+  .option('sub-task')
+  .action(async (options) => {
+    const parent = await (options.flags['sub-task'] ? todoIdPicker('parent todo') : Promise.resolve(''))
     const title = options.allSubCommands.title as string
     console.log('creating todo:', title)
     const id = Guid.raw()
-    const update = addToList(todo(id, title))
+    const toAdd = todo(id, title)
+    if(parent){
+      toAdd.parentTaskId = parent
+    }
+    const update = addToList(toAdd)
     appendActionToFile(update, todoFilePath)
-      .then(() => showListFromFile(todoFilePath))
+      .then(() => showTreeFromFile(todoFilePath))
       .catch(console.error)
   })
 
 commander
   .command('tree')
+  .option('filter', true)
   .action(({ flags }) => {
-    return showTreeFromFile(todoFilePath)
+    let filter = defaultFilter
+    if(flags.filter === 'all'){
+      filter = allowAnyTodo
+    }
+    return showTreeFromFile(todoFilePath, filter)
   })
 
 commander
-  .command('list')
+  .command('list [<viewName>]')
   .option('available-time', true)
   .action(({ flags }) => {
     let filter = defaultFilter
@@ -52,7 +63,7 @@ commander
       console.log(`Exluding tasks with estimates longer than ${minutes} minutes`)
       filter = intersectionOf(defaultFilter, noLongerThan(minutes))
     }
-    return showListFromFile(todoFilePath, filter)
+    return showTreeFromFile(todoFilePath, filter)
   })
 
 commander
@@ -136,18 +147,19 @@ function todoIdPicker(prompt = 'number'): Promise<string> {
   return loadActionsFromFile(todoFilePath)
     .then(buildStateFromActions)
     .then(todos => todos.filter(isIncomplete))
+    .then(todos => buildTodoTree(todos))
     .then(todos => {
-      console.log(renderTodoList(todos, true))
+      console.log(renderTodoTree(todos, true))
       return todos
     })
     .then(todos => {
       return promptInput(prompt).then(answer => {
-        const n = parseInt(answer, 10)
-        const todo = todos[n]
-        if (todo) {
-          return Promise.resolve(todo.id)
-        }
-        return Promise.reject(new Error('Bad selection ' + n))
+        const address = answer.split('.').map(part => parseInt(part, 10))
+        const siblings = address.slice(0,-1).reduce((list: TreeNode<Todo>[], i: number) => {
+          return list[i].children
+        }, todos) || todos
+        const todo = siblings[address[address.length-1]]
+        return Promise.resolve(todo.id)
       })
     })
 }
@@ -178,14 +190,16 @@ function renderTodoList(todos: Todo[], showNumbers = false): string {
   }).join('\n')
 }
 
-function preRenderTodoTree(todos: TreeNode<Todo>[], prefix = ''): string[] {
-  const indent = '  '
+function preRenderTodoTree(todos: TreeNode<Todo>[], currentIndent = '', numberingPrefix = ''): string[] {
+  const indentUnit = '  '
   return flatMap(todos, (todo, i) => {
-    return [renderTodo(todo, prefix), ...preRenderTodoTree(todo.children, prefix + indent)]
+    const prefix = `${currentIndent}${numberingPrefix? (numberingPrefix + i) : ''}`
+    const numberingPrefixForSubTree = numberingPrefix? prefix+'.' : ''
+    return [renderTodo(todo, prefix), ...preRenderTodoTree(todo.children, currentIndent + indentUnit, numberingPrefixForSubTree)]
   })
 }
-function renderTodoTree(todos: TreeNode<Todo>[]): string {
-  return preRenderTodoTree(todos).join('\n')
+function renderTodoTree(todos: TreeNode<Todo>[], showNumbers = false): string {
+  return preRenderTodoTree(todos, '', showNumbers? '#' : '').join('\n')
 }
 
 function renderTodo(todo: Todo, prefix?: string): string {
