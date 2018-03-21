@@ -6,7 +6,7 @@ import { writeFileSync, appendFileSync } from 'fs'
 import { appendActionToFile } from '../file/save'
 import { loadActionsFromFile, buildStateFromActions } from '../file/load'
 import * as path from 'path'
-import { markCompleted, addContexts, changeTitle, setEstimate, setParentTask, addTags } from '../core/actions'
+import { markCompleted, addContexts, changeTitle, setEstimate, setParentTask, addTags, setDueDate } from '../core/actions'
 import { allowAnyTodo, isIncomplete, intersectionOf, allContextsActive, noLongerThan } from '../core/filters/index'
 import { isUndefined, isString } from 'util'
 import * as readline from 'readline'
@@ -112,7 +112,7 @@ commander
     const gettingId = id ? Promise.resolve(id) : todoIdPicker()
     const gettingTag = tagName ? Promise.resolve(tagName) : gettingId.then(() => promptInput('Tag to add'))
     return Promise.all([gettingId, gettingTag]).then(([id, tagName]) => {
-      const update = updateItemInList(id, addTags([{name: tagName}]))
+      const update = updateItemInList(id, addTags([{ name: tagName }]))
       return appendActionToFile(update, todoFilePath)
     })
   })
@@ -138,6 +138,23 @@ commander
     const gettingParentId = parent ? Promise.resolve(parent) : gettingId.then(() => todoIdPicker('parent todo'))
     return Promise.all([gettingId, gettingParentId]).then(([id, parentId]) => {
       const update = updateItemInList(id, setParentTask(parentId))
+      return appendActionToFile(update, todoFilePath)
+    })
+  })
+
+commander
+  .command('edit set-due [<dueDate>] [<id>]')
+  .action((options) => {
+    const { dueDate, id } = options.allSubCommands
+    const gettingId = id ? Promise.resolve(id) : todoIdPicker()
+    const gettingDueDate = dueDate ? Promise.resolve(dueDate) : gettingId.then(() => promptInput('Due Date (iso format)'))
+    return Promise.all([gettingId, gettingDueDate]).then(([id, dueDateString]) => {
+      const dueDate = new Date(dueDateString)
+      if (isNaN(dueDate.getTime())) {
+        console.error('Date parse error')
+        throw new Error('Date parse error')
+      }
+      const update = updateItemInList(id, setDueDate(dueDate))
       return appendActionToFile(update, todoFilePath)
     })
   })
@@ -229,6 +246,9 @@ function renderTodo (todo: Todo, prefix?: string): string {
   }
   if (todo.estimateMinutes) {
     parts.push(`[${todo.estimateMinutes} mins]`)
+  }
+  if (todo.dueDate) {
+    parts.push(`(Due by: ${todo.dueDate.toISOString().slice(0,10)})`)
   }
   return parts.join(' ')
 

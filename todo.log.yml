@@ -345,3 +345,9 @@
   update:
     type: markCompleted
   time: 2018-03-20T18:27:16.834Z
+- type: updateItem
+  id: 17b9076a-55e1-bb23-35f8-140931f4b6c4
+  update:
+    type: setDueDate
+    dueDate: 2018-03-22T00:00:00.000Z
+  time: 2018-03-21T08:02:16.269Z

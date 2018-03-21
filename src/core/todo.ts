@@ -10,6 +10,7 @@ export interface Todo {
   tags: {name: string}[]
   estimateMinutes?: number
   parentTaskId?: string
+  dueDate?: Date
 }
 
 function parseContexts (rawContexts: any): string[] {
@@ -46,8 +47,16 @@ function parseTags (rawTags: any): {name: string}[] {
   })
 }
 
+function parseDate (rawDate: string): Date {
+  const date = new Date(rawDate)
+  if (isNaN(date.getTime())) {
+    throw new Error('Bad date string: ' + rawDate)
+  }
+  return date
+}
+
 export function deserialiseTodo (raw: Dict<any>): Todo {
-  const { id, title, complete, createdAt, contexts, estimateMinutes, parentTaskId, tags } = raw
+  const { id, title, complete, createdAt, contexts, estimateMinutes, parentTaskId, tags, dueDate } = raw
   if (!isString(id)) {
     throw new Error('missing or malformed id')
   }
@@ -66,6 +75,9 @@ export function deserialiseTodo (raw: Dict<any>): Todo {
   if (!isUndefined(parentTaskId) && !isString(parentTaskId)) {
     throw new Error('mis-typed field "parentTaskId". Should be string.')
   }
+  if (!isUndefined(dueDate) && !isString(dueDate)) {
+    throw new Error('mis-typed field "dueDate". Should be string.')
+  }
 
   const parsedCreatedAt = isDate(createdAt) ? createdAt : new Date(Date.parse(createdAt))
   return {
@@ -76,7 +88,8 @@ export function deserialiseTodo (raw: Dict<any>): Todo {
     contexts: parseContexts(contexts),
     tags: parseTags(tags),
     estimateMinutes,
-    parentTaskId
+    parentTaskId,
+    dueDate: (dueDate && parseDate(dueDate)) || undefined
   }
 }
 
@@ -89,6 +102,7 @@ export function todo (id: string, title: string): Todo {
     contexts: [],
     tags: [],
     estimateMinutes: undefined,
-    parentTaskId: undefined
+    parentTaskId: undefined,
+    dueDate: undefined
   }
 }

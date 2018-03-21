@@ -1,6 +1,6 @@
 import { Todo } from './todo'
 import { Dict, isDict } from '../util/deserialising'
-import { isString, isArray, isNumber } from 'util'
+import { isString, isArray, isNumber, isDate } from 'util'
 
 export type ChangeTitle = {
   type: 'changeTitle'
@@ -36,6 +36,12 @@ export type AddTags = {
   tags: {name: string}[]
 }
 export const addTags = (tags: {name: string}[]): AddTags => ({ type: 'addTags', tags })
+
+export interface SetDueDate {
+  type: 'setDueDate'
+  dueDate: Date
+}
+export const setDueDate = (dueDate: Date): SetDueDate => ({ type: 'setDueDate', dueDate })
 
 export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
   const type = raw.type
@@ -109,9 +115,24 @@ export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
       return setParentTask(parentTaskId)
     }
 
+    case 'setDueDate': {
+      const rawDueDate = raw.dueDate
+      if(isDate(rawDueDate)){
+        return setDueDate(rawDueDate)
+      }
+      if (isString(rawDueDate)) {
+        const dueDate = new Date(rawDueDate)
+        if (!isNaN(dueDate.getTime())) {
+          return setDueDate(dueDate)
+        }
+        throw new Error('Malformed setDueDate update. Bad date string in field "dueDate"')
+      }
+      throw new Error('Malformed setDueDate update. Missing or mis-typed field "dueDate".' + typeof(rawDueDate))
+    }
+
     default:
       throw new Error(`Malformed todo update type: '${type}'`)
   }
 }
 
-export type TodoUpdate = ChangeTitle | MarkCompleted | AddContexts | SetEstimate | SetParentTask | AddTags
+export type TodoUpdate = ChangeTitle | MarkCompleted | AddContexts | SetEstimate | SetParentTask | AddTags | SetDueDate

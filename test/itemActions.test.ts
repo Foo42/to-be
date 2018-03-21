@@ -1,4 +1,4 @@
-import { changeTitle, markCompleted, TodoUpdate, addContexts, setEstimate, setParentTask, addTags } from '../src/core/actions'
+import { changeTitle, markCompleted, TodoUpdate, addContexts, setEstimate, setParentTask, addTags, setDueDate } from '../src/core/actions'
 import { assert } from 'chai'
 import { applyListAction } from '../src/core/evolveList'
 import { todo } from '../src/core/todo'
@@ -69,4 +69,13 @@ describe('item actions.', () => {
     })
   })
 
+  describe('setDueDate', () => {
+    it('should evolve item to set the dueDate field', () => {
+      const original = todo('123', 'do stuff')
+      const dueDate = new Date()
+      const updated = applyUpdate(original, setDueDate(dueDate))
+      assert.deepEqual(updated.dueDate, dueDate)
+      assert.deepEqual(original.dueDate, undefined)
+    })
+  })
 })

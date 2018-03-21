@@ -21,6 +21,9 @@ export function applyUpdate (original: Todo, action: TodoUpdate): Todo {
     case 'addTags':
       return { ...original, tags: [...original.tags, ...action.tags] }
 
+    case 'setDueDate':
+      return { ...original, dueDate: action.dueDate }
+
     default:
       const x: never = action
       throw new Error('unsupported updated type')
