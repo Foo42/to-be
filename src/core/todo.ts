@@ -1,3 +1,4 @@
+import * as Guid from 'guid'
 import { isString, isBoolean, isDate, isUndefined, isArray, isNumber } from 'util'
 import { Dict, isDict } from '../util/deserialising'
 
@@ -105,4 +106,8 @@ export function todo (id: string, title: string): Todo {
     parentTaskId: undefined,
     dueDate: undefined
   }
+}
+
+export function generateId () {
+  return Guid.raw()
 }

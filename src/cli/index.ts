@@ -12,14 +12,16 @@ import { isUndefined, isString } from 'util'
 import * as readline from 'readline'
 import * as Guid from 'guid'
 import { NOTFOUND } from 'dns'
-import { TreeNode, buildTodoTree } from '../core/tree'
+import { TreeNode, buildTodoTree, SummariseDueDates, deepSort, deepSortAll } from '../core/tree'
 import { flatMap } from 'lodash'
+import { dueSoonest } from '../core/sorters'
+import { quickAddParse } from './quickAdd'
 
 const defaultFilePath = path.join(process.cwd(), 'todo.log.yml')
 const todoFilePath = process.env.TODO_FILE || defaultFilePath
 const activeContexts = (process.env.ACTIVE_CONTEXTS ? process.env.ACTIVE_CONTEXTS.split(',') : []).map(context => context.trim().toLowerCase())
 
-const defaultFilter = intersectionOf(isIncomplete, (todo) => allContextsActive(todo, activeContexts))
+const actionableNowFilter = intersectionOf(isIncomplete, (todo) => allContextsActive(todo, activeContexts))
 
 const commander = new Commander()
 
@@ -28,10 +30,7 @@ commander
   .option('sub-task')
   .action(async (options) => {
     const parent = await (options.flags['sub-task'] ? todoIdPicker('parent todo') : Promise.resolve(''))
-    const title = options.allSubCommands.title as string
-    console.log('creating todo:', title)
-    const id = Guid.raw()
-    const toAdd = todo(id, title)
+    const toAdd = quickAddParse(options.allSubCommands.title as string)
     if (parent) {
       toAdd.parentTaskId = parent
     }
@@ -45,7 +44,7 @@ commander
   .command('tree')
   .option('filter', true)
   .action(({ flags }) => {
-    let filter = defaultFilter
+    let filter = isIncomplete
     if (flags.filter === 'all') {
       filter = allowAnyTodo
     }
@@ -53,15 +52,38 @@ commander
   })
 
 commander
-  .command('list [<viewName>]')
+  .command('next')
   .option('available-time', true)
   .action(({ flags }) => {
-    let filter = defaultFilter
+    let filter = actionableNowFilter
     const timeString = flags['available-time']
     if (isString(timeString)) {
       const minutes = parseInt(timeString, 10)
       console.log(`Exluding tasks with estimates longer than ${minutes} minutes`)
-      filter = intersectionOf(defaultFilter, noLongerThan(minutes))
+      filter = intersectionOf(actionableNowFilter, noLongerThan(minutes))
+    }
+
+    return loadActionsFromFile(todoFilePath)
+      .then(buildStateFromActions)
+      .then(todos => todos.filter(filter))
+      .then(todos => buildTodoTree(todos))
+      .then(trees => trees.map(SummariseDueDates))
+      .then(trees => deepSortAll(trees, dueSoonest))
+      .then(renderTodoTree)
+      .then(console.log)
+      .catch(console.error)
+  })
+
+commander
+  .command('list [<viewName>]')
+  .option('available-time', true)
+  .action(({ flags }) => {
+    let filter = isIncomplete
+    const timeString = flags['available-time']
+    if (isString(timeString)) {
+      const minutes = parseInt(timeString, 10)
+      console.log(`Exluding tasks with estimates longer than ${minutes} minutes`)
+      filter = intersectionOf(actionableNowFilter, noLongerThan(minutes))
     }
     return showTreeFromFile(todoFilePath, filter)
   })
@@ -77,7 +99,7 @@ commander
       const update = updateItemInList(id, markCompleted())
       return appendActionToFile(update, todoFilePath)
     })
-      .then(() => showListFromFile(todoFilePath))
+      .then(() => showTreeFromFile(todoFilePath))
   })
 
 commander
@@ -193,7 +215,7 @@ function todoIdPicker (prompt = 'number'): Promise<string> {
     })
 }
 
-function showListFromFile (todoFilePath: string, filter = defaultFilter) {
+function showListFromFile (todoFilePath: string, filter = isIncomplete) {
   return loadActionsFromFile(todoFilePath)
     .then(buildStateFromActions)
     .then(todos => todos.filter(filter))
@@ -202,7 +224,7 @@ function showListFromFile (todoFilePath: string, filter = defaultFilter) {
     .catch(console.error)
 }
 
-function showTreeFromFile (todoFilePath: string, filter = defaultFilter) {
+function showTreeFromFile (todoFilePath: string, filter = isIncomplete) {
   return loadActionsFromFile(todoFilePath)
     .then(buildStateFromActions)
     .then(todos => todos.filter(filter))

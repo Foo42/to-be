@@ -351,3 +351,114 @@
     type: setDueDate
     dueDate: 2018-03-22T00:00:00.000Z
   time: 2018-03-21T08:02:16.269Z
+- type: addToList
+  item:
+    id: 8555c244-f45f-2fdb-588f-32e55e9b01c5
+    title: parse additional information out of todo create string
+    complete: false
+    createdAt: 2018-03-21T17:27:04.658Z
+    contexts: []
+    tags: []
+  time: 2018-03-21T17:27:04.658Z
+- type: updateItem
+  id: 7307183f-9307-0e4b-2671-9b9d472fb18b
+  update:
+    type: setParentTask
+    parentTaskId: 8555c244-f45f-2fdb-588f-32e55e9b01c5
+  time: 2018-03-21T17:27:34.012Z
+- type: addToList
+  item:
+    id: ec46073a-dc0f-ec8c-218f-b0d9d111ced2
+    title: parse hash tags out of todo create
+    complete: false
+    createdAt: 2018-03-21T17:28:10.792Z
+    contexts: []
+    tags: []
+    parentTaskId: 8555c244-f45f-2fdb-588f-32e55e9b01c5
+  time: 2018-03-21T17:28:10.792Z
+- type: updateItem
+  id: '1518766728498'
+  update:
+    type: markCompleted
+  time: 2018-03-26T16:24:16.755Z
+- type: updateItem
+  id: 17b9076a-55e1-bb23-35f8-140931f4b6c4
+  update:
+    type: markCompleted
+  time: 2018-03-26T16:24:33.011Z
+- type: addToList
+  item:
+    id: 2eb1f4e8-619a-c806-6c6e-11c0264efe9b
+    title: next view sorted by priority
+    complete: false
+    createdAt: 2018-03-26T16:25:39.459Z
+    contexts: []
+    tags:
+      - name: views
+  time: 2018-03-26T16:25:39.459Z
+- type: addToList
+  item:
+    id: 263011a5-b89c-6bc2-1f47-3adfff4fcecc
+    title: implemented nested tree sorting
+    complete: false
+    createdAt: 2018-03-26T16:26:26.582Z
+    contexts: []
+    tags: []
+    parentTaskId: 2eb1f4e8-619a-c806-6c6e-11c0264efe9b
+  time: 2018-03-26T16:26:26.582Z
+- type: addToList
+  item:
+    id: e8f4f587-781f-ee08-0e05-385c6228d4b9
+    title: sort by earliest due date
+    complete: false
+    createdAt: 2018-03-26T16:26:58.455Z
+    contexts: []
+    tags: []
+    parentTaskId: 2eb1f4e8-619a-c806-6c6e-11c0264efe9b
+  time: 2018-03-26T16:26:58.455Z
+- type: updateItem
+  id: 263011a5-b89c-6bc2-1f47-3adfff4fcecc
+  update:
+    type: markCompleted
+  time: 2018-03-26T16:27:06.507Z
+- type: updateItem
+  id: e8f4f587-781f-ee08-0e05-385c6228d4b9
+  update:
+    type: markCompleted
+  time: 2018-03-26T16:27:11.995Z
+- type: addToList
+  item:
+    id: 53a8b1b2-95c4-f005-86f3-52f79202c442
+    title: sort by number of matched contexts
+    complete: false
+    createdAt: 2018-03-26T16:27:42.980Z
+    contexts: []
+    tags: []
+    parentTaskId: 2eb1f4e8-619a-c806-6c6e-11c0264efe9b
+  time: 2018-03-26T16:27:42.980Z
+- type: addToList
+  item:
+    id: 128ed326-63fd-4c35-f44a-b2c11de5df7f
+    title: testing
+    complete: false
+    createdAt: 2018-03-26T16:28:23.721Z
+    contexts:
+      - computer
+    tags: []
+    parentTaskId: 7307183f-9307-0e4b-2671-9b9d472fb18b
+  time: 2018-03-26T16:28:23.721Z
+- type: updateItem
+  id: 128ed326-63fd-4c35-f44a-b2c11de5df7f
+  update:
+    type: markCompleted
+  time: 2018-03-26T16:28:34.728Z
+- type: updateItem
+  id: 7307183f-9307-0e4b-2671-9b9d472fb18b
+  update:
+    type: markCompleted
+  time: 2018-03-26T16:28:48.851Z
+- type: updateItem
+  id: ec46073a-dc0f-ec8c-218f-b0d9d111ced2
+  update:
+    type: markCompleted
+  time: 2018-03-26T16:28:52.445Z

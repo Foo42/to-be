@@ -117,7 +117,7 @@ export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
 
     case 'setDueDate': {
       const rawDueDate = raw.dueDate
-      if(isDate(rawDueDate)){
+      if (isDate(rawDueDate)) {
         return setDueDate(rawDueDate)
       }
       if (isString(rawDueDate)) {
