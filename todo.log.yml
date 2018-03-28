@@ -462,3 +462,83 @@
   update:
     type: markCompleted
   time: 2018-03-26T16:28:52.445Z
+- type: addToList
+  item:
+    id: e23fa1e0-fabc-af8c-18a4-abccc6cf279c
+    title: archive todos
+    complete: false
+    createdAt: 2018-03-28T06:38:59.778Z
+    contexts: []
+    tags: []
+  time: 2018-03-28T06:38:59.778Z
+- type: updateItem
+  id: a318d7b5-3520-915f-dda7-a890fc196c3d
+  update:
+    type: markCompleted
+  time: 2018-03-28T06:39:26.635Z
+- type: addToList
+  item:
+    id: cb802506-e13f-4cfb-0707-9ca3a0df8249
+    title: notes
+    complete: false
+    createdAt: 2018-03-28T06:52:48.679Z
+    contexts: []
+    tags: []
+  time: 2018-03-28T06:52:48.679Z
+- type: addToList
+  item:
+    id: 865d7f25-e234-34ff-33c0-3856436a71c2
+    title: adding a note
+    complete: false
+    createdAt: 2018-03-28T06:53:12.080Z
+    contexts: []
+    tags: []
+    parentTaskId: cb802506-e13f-4cfb-0707-9ca3a0df8249
+  time: 2018-03-28T06:53:12.080Z
+- type: addToList
+  item:
+    id: 201791a4-4d94-d6fa-28eb-41df3f97bd0f
+    title: showing notes in cli
+    complete: false
+    createdAt: 2018-03-28T06:53:49.664Z
+    contexts: []
+    tags: []
+    parentTaskId: cb802506-e13f-4cfb-0707-9ca3a0df8249
+  time: 2018-03-28T06:53:49.664Z
+- type: addToList
+  item:
+    id: 326b8ae0-dc47-034f-9695-47980697bce5
+    title: removing a note
+    complete: false
+    createdAt: 2018-03-28T06:54:05.906Z
+    contexts: []
+    tags: []
+    parentTaskId: cb802506-e13f-4cfb-0707-9ca3a0df8249
+  time: 2018-03-28T06:54:05.906Z
+- type: addToList
+  item:
+    id: 831ed817-afb8-53f9-ea1f-d239317223dd
+    title: adding a blocking task
+    complete: false
+    createdAt: 2018-03-28T06:54:30.281Z
+    contexts: []
+    tags: []
+    parentTaskId: c2407a7d-d549-01ab-b0f5-6c7ef78fe747
+  time: 2018-03-28T06:54:30.281Z
+- type: addToList
+  item:
+    id: 33f85894-9df6-67de-4372-741acf5cf8e9
+    title: filtering tasks with incomplete blockers from next view
+    complete: false
+    createdAt: 2018-03-28T06:55:11.487Z
+    contexts: []
+    tags: []
+    parentTaskId: c2407a7d-d549-01ab-b0f5-6c7ef78fe747
+  time: 2018-03-28T06:55:11.487Z
+- type: updateItem
+  id: cb802506-e13f-4cfb-0707-9ca3a0df8249
+  update:
+    type: addTags
+    tags:
+      - name: parity
+  time: 2018-03-28T06:56:29.329Z
