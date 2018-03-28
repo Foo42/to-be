@@ -1,7 +1,7 @@
-import { changeTitle, markCompleted, TodoUpdate, addContexts, setEstimate, setParentTask, addTags, setDueDate } from '../src/core/actions'
+import { changeTitle, markCompleted, TodoUpdate, addContexts, setEstimate, setParentTask, addTags, setDueDate, addNote } from '../src/core/actions'
 import { assert } from 'chai'
 import { applyListAction } from '../src/core/evolveList'
-import { todo } from '../src/core/todo'
+import { todo, Note } from '../src/core/todo'
 import { applyUpdate } from '../src/core/evolveItem'
 import { toASCII } from 'punycode'
 
@@ -76,6 +76,16 @@ describe('item actions.', () => {
       const updated = applyUpdate(original, setDueDate(dueDate))
       assert.deepEqual(updated.dueDate, dueDate)
       assert.deepEqual(original.dueDate, undefined)
+    })
+  })
+
+  describe('addNote', () => {
+    it('should add a note', () => {
+      const original = todo('123', 'do stuff')
+      const note: Note = { textMarkdown: 'hello' }
+      const updated = applyUpdate(original, addNote(note))
+      assert.deepEqual(updated.notes, [note])
+      assert.deepEqual(original.notes, [])
     })
   })
 })

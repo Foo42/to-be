@@ -11,7 +11,8 @@ describe('filters.', () => {
         complete: false,
         createdAt: new Date(),
         contexts: [],
-        tags: []
+        tags: [],
+        notes: []
       }
       const activeContexts: string[] = []
       expect(allContextsActive(todo, activeContexts)).to.eql(true)
@@ -24,7 +25,8 @@ describe('filters.', () => {
         complete: false,
         createdAt: new Date(),
         contexts: ['business-hours'],
-        tags: []
+        tags: [],
+        notes: []
       }
       const activeContexts: string[] = []
       expect(allContextsActive(todo, activeContexts)).to.eql(false)
@@ -39,7 +41,8 @@ describe('filters.', () => {
         complete: false,
         createdAt: new Date(),
         contexts: [],
-        tags: []
+        tags: [],
+        notes: []
       }
       expect(noLongerThan(1)(todo)).to.eql(true)
     })
@@ -52,6 +55,7 @@ describe('filters.', () => {
         createdAt: new Date(),
         contexts: [],
         tags: [],
+        notes: [],
         estimateMinutes: 1
       }
       expect(noLongerThan(2)(todo)).to.eql(true)
@@ -65,6 +69,7 @@ describe('filters.', () => {
         createdAt: new Date(),
         contexts: [],
         tags: [],
+        notes: [],
         estimateMinutes: 2
       }
       expect(noLongerThan(2)(todo)).to.eql(true)
@@ -78,6 +83,7 @@ describe('filters.', () => {
         createdAt: new Date(),
         contexts: [],
         tags: [],
+        notes: [],
         estimateMinutes: 3
       }
       expect(noLongerThan(2)(todo)).to.eql(false)

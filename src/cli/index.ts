@@ -6,7 +6,7 @@ import { writeFileSync, appendFileSync } from 'fs'
 import { appendActionToFile } from '../file/save'
 import { loadActionsFromFile, buildStateFromActions } from '../file/load'
 import * as path from 'path'
-import { markCompleted, addContexts, changeTitle, setEstimate, setParentTask, addTags, setDueDate } from '../core/actions'
+import { markCompleted, addContexts, changeTitle, setEstimate, setParentTask, addTags, setDueDate, addNote } from '../core/actions'
 import { allowAnyTodo, isIncomplete, intersectionOf, allContextsActive, noLongerThan } from '../core/filters/index'
 import { isUndefined, isString } from 'util'
 import * as readline from 'readline'
@@ -177,6 +177,18 @@ commander
         throw new Error('Date parse error')
       }
       const update = updateItemInList(id, setDueDate(dueDate))
+      return appendActionToFile(update, todoFilePath)
+    })
+  })
+
+commander
+  .command('edit add-note [<noteText>] [<id>]')
+  .action((options) => {
+    const { id, noteText } = options.allSubCommands
+    const gettingId = id ? Promise.resolve(id) : todoIdPicker()
+    const gettingNoteText = noteText ? Promise.resolve(noteText) : gettingId.then(() => promptInput('Note Text'))
+    return Promise.all([gettingId, gettingNoteText]).then(([id, noteText]) => {
+      const update = updateItemInList(id, addNote({textMarkdown: noteText}))
       return appendActionToFile(update, todoFilePath)
     })
   })

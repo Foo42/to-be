@@ -1,4 +1,4 @@
-import { Todo } from './todo'
+import { Todo, parseNote, Note } from './todo'
 import { Dict, isDict } from '../util/deserialising'
 import { isString, isArray, isNumber, isDate } from 'util'
 
@@ -42,6 +42,14 @@ export interface SetDueDate {
   dueDate: Date
 }
 export const setDueDate = (dueDate: Date): SetDueDate => ({ type: 'setDueDate', dueDate })
+
+export interface AddNote {
+  type: 'addNote'
+  note: {
+    textMarkdown: string
+  }
+}
+export const addNote = (note: Note): AddNote => ({ type: 'addNote', note })
 
 export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
   const type = raw.type
@@ -130,9 +138,17 @@ export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
       throw new Error('Malformed setDueDate update. Missing or mis-typed field "dueDate".' + typeof(rawDueDate))
     }
 
+    case 'addNote': {
+      const { note } = raw
+      if (!isDict(note)) {
+        throw new Error('Malformed addNote update. Missing or mis-typed field "note"')
+      }
+      return addNote(parseNote(note))
+    }
+
     default:
       throw new Error(`Malformed todo update type: '${type}'`)
   }
 }
 
-export type TodoUpdate = ChangeTitle | MarkCompleted | AddContexts | SetEstimate | SetParentTask | AddTags | SetDueDate
+export type TodoUpdate = ChangeTitle | MarkCompleted | AddContexts | SetEstimate | SetParentTask | AddTags | SetDueDate | AddNote

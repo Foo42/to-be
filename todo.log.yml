@@ -542,3 +542,22 @@
     tags:
       - name: parity
   time: 2018-03-28T06:56:29.329Z
+- type: updateItem
+  id: 865d7f25-e234-34ff-33c0-3856436a71c2
+  update:
+    type: markCompleted
+  time: 2018-03-28T16:29:18.133Z
+- type: updateItem
+  id: 201791a4-4d94-d6fa-28eb-41df3f97bd0f
+  update:
+    type: addNote
+    note:
+      textMarkdown: May need to wrap text
+  time: 2018-03-28T16:34:31.449Z
+- type: updateItem
+  id: 201791a4-4d94-d6fa-28eb-41df3f97bd0f
+  update:
+    type: addNote
+    note:
+      textMarkdown: Do we want to show all notes in default view?
+  time: 2018-03-28T16:34:57.569Z

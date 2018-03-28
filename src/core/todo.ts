@@ -9,6 +9,7 @@ export interface Todo {
   createdAt: Date
   contexts: string[]
   tags: {name: string}[]
+  notes: {textMarkdown: string}[]
   estimateMinutes?: number
   parentTaskId?: string
   dueDate?: Date
@@ -26,6 +27,26 @@ function parseContexts (rawContexts: any): string[] {
       return rawContext
     }
     throw new Error('malformed context')
+  })
+}
+
+export interface Note {
+  textMarkdown: string
+}
+export function parseNote (rawNote: Dict<any>): Note {
+  const { textMarkdown } = rawNote
+  if (!isString(textMarkdown)) {
+    throw new Error('Malformed note. Missing or mis-typed field "textMarkdown"')
+  }
+  return { textMarkdown }
+}
+
+function parseArray<T> (raw: any[], parseItem: (item: Dict<any>) => T): T[] {
+  return raw.map(rawItem => {
+    if (!isDict(rawItem)) {
+      throw new Error('Item is not dict')
+    }
+    return parseItem(rawItem)
   })
 }
 
@@ -57,7 +78,7 @@ function parseDate (rawDate: string): Date {
 }
 
 export function deserialiseTodo (raw: Dict<any>): Todo {
-  const { id, title, complete, createdAt, contexts, estimateMinutes, parentTaskId, tags, dueDate } = raw
+  const { id, title, complete, createdAt, contexts, estimateMinutes, parentTaskId, tags, dueDate, notes= [] } = raw
   if (!isString(id)) {
     throw new Error('missing or malformed id')
   }
@@ -79,6 +100,9 @@ export function deserialiseTodo (raw: Dict<any>): Todo {
   if (!isUndefined(dueDate) && !isString(dueDate)) {
     throw new Error('mis-typed field "dueDate". Should be string.')
   }
+  if (!isArray(notes)) {
+    throw new Error('mis-typed field "notes". Should be array.')
+  }
 
   const parsedCreatedAt = isDate(createdAt) ? createdAt : new Date(Date.parse(createdAt))
   return {
@@ -88,6 +112,7 @@ export function deserialiseTodo (raw: Dict<any>): Todo {
     createdAt: parsedCreatedAt,
     contexts: parseContexts(contexts),
     tags: parseTags(tags),
+    notes: parseArray(notes, parseNote),
     estimateMinutes,
     parentTaskId,
     dueDate: (dueDate && parseDate(dueDate)) || undefined
@@ -102,6 +127,7 @@ export function todo (id: string, title: string): Todo {
     createdAt: new Date(),
     contexts: [],
     tags: [],
+    notes: [],
     estimateMinutes: undefined,
     parentTaskId: undefined,
     dueDate: undefined
