@@ -188,7 +188,7 @@ commander
     const gettingId = id ? Promise.resolve(id) : todoIdPicker()
     const gettingNoteText = noteText ? Promise.resolve(noteText) : gettingId.then(() => promptInput('Note Text'))
     return Promise.all([gettingId, gettingNoteText]).then(([id, noteText]) => {
-      const update = updateItemInList(id, addNote({textMarkdown: noteText}))
+      const update = updateItemInList(id, addNote({ textMarkdown: noteText }))
       return appendActionToFile(update, todoFilePath)
     })
   })

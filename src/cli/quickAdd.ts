@@ -6,12 +6,14 @@ export function quickAddParse (input: string): Todo {
   const contexts = data.filter(s => s.startsWith('@')).map(s => s.substring(1))
   const tags = data.filter(s => s.startsWith('#')).map(s => ({ name: s.substring(1) }))
   const dueDate = extractDueDate(data)
+  const estimateMinutes = extractEstimate(data)
 
   return {
     ...todo(generateId(), title),
     contexts,
     tags,
-    dueDate
+    dueDate,
+    estimateMinutes
   }
 }
 
@@ -26,4 +28,14 @@ function extractDueDate (parts: string[]): Date | undefined {
     throw new Error('Date parse error')
   }
   return date
+}
+
+function extractEstimate (parts: string[]): number | undefined {
+  const found = parts.find(s => s.startsWith('t='))
+  if (!found) {
+    return undefined
+  }
+  const timeString = found.split('=')[1]
+  const minutes = parseInt(timeString, 10)
+  return minutes
 }
