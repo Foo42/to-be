@@ -54,3 +54,9 @@ Optionally set currently active contexts using `ACTIVE_CONTEXTS` environment var
 `todo list`
 
 Optionally filter out todos with an estimate greater than your available time with `--available-time` flag. For example to exclude todos estimated to take longer than 30 minutes use the command `todo list --available-time 30`
+
+### Create Todos
+
+`todo create 'this is a todo; @home #example-tag t=10 due=2020-10-20'`
+
+The command to create a todo is `todo create` this requires a single argument which is the todo's title. Tags, contexts, due date and time estimates can optionally be specified following a semicolon folowing the syntax shown in the example above.
