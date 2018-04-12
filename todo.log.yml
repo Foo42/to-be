@@ -561,3 +561,23 @@
     note:
       textMarkdown: Do we want to show all notes in default view?
   time: 2018-03-28T16:34:57.569Z
+- type: updateItem
+  id: fdcbe752-9e6e-d5dc-891d-0cecbf7b6881
+  update:
+    type: markCompleted
+  time: 2018-04-12T06:42:04.418Z
+- type: updateItem
+  id: 8555c244-f45f-2fdb-588f-32e55e9b01c5
+  update:
+    type: markCompleted
+  time: 2018-04-12T06:42:17.884Z
+- type: addToList
+  item:
+    id: 5dc61426-2683-b092-6c73-3772da751442
+    title: highlight actionable tasks in next view
+    complete: false
+    createdAt: 2018-04-12T06:44:07.789Z
+    contexts: []
+    tags: []
+    notes: []
+  time: 2018-04-12T06:44:07.789Z
