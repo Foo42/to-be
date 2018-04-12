@@ -97,8 +97,8 @@ export function deserialiseTodo (raw: Dict<any>): Todo {
   if (!isUndefined(parentTaskId) && !isString(parentTaskId)) {
     throw new Error('mis-typed field "parentTaskId". Should be string.')
   }
-  if (!isUndefined(dueDate) && !isString(dueDate)) {
-    throw new Error('mis-typed field "dueDate". Should be string.')
+  if (!isUndefined(dueDate) && !isDate(dueDate)) {
+    throw new Error('mis-typed field "dueDate". Should be Date.')
   }
   if (!isArray(notes)) {
     throw new Error('mis-typed field "notes". Should be array.')
@@ -115,7 +115,7 @@ export function deserialiseTodo (raw: Dict<any>): Todo {
     notes: parseArray(notes, parseNote),
     estimateMinutes,
     parentTaskId,
-    dueDate: (dueDate && parseDate(dueDate)) || undefined
+    dueDate: dueDate
   }
 }
 
