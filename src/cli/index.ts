@@ -16,6 +16,7 @@ import { TreeNode, buildTodoTree, SummariseDueDates, deepSort, deepSortAll } fro
 import { flatMap } from 'lodash'
 import { dueSoonest } from '../core/sorters'
 import { quickAddParse } from './quickAdd'
+import * as chalk from 'chalk'
 
 const defaultFilePath = path.join(process.cwd(), 'todo.log.yml')
 const todoFilePath = process.env.TODO_FILE || defaultFilePath
@@ -265,7 +266,7 @@ function renderTodoTree (todos: TreeNode<Todo>[], showNumbers = false): string {
   return preRenderTodoTree(todos, '', showNumbers ? '#' : '').join('\n')
 }
 
-function renderTodo (todo: Todo, prefix?: string): string {
+function renderTodo (todo: Todo | TreeNode<Todo>, prefix?: string): string {
   const parts: string[] = []
   if (prefix) {
     parts.push(prefix)
@@ -284,7 +285,9 @@ function renderTodo (todo: Todo, prefix?: string): string {
   if (todo.dueDate) {
     parts.push(`(Due by: ${todo.dueDate.toISOString().slice(0,10)})`)
   }
-  return parts.join(' ')
+  const isActionable = !todo.complete && ('children' in todo ? todo.children.length === 0 : true)
+  const styler = isActionable ? chalk.default.white : chalk.default.grey
+  return styler(parts.join(' '))
 
 }
 
