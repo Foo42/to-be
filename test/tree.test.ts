@@ -1,6 +1,8 @@
-import { Todo } from '../src/core/todo'
+import { Todo, todo } from '../src/core/todo'
 import { buildTodoTree, TreeNode, SummariseDueDates } from '../src/core/tree'
 import { expect } from 'chai'
+
+const baseTodo = todo
 
 describe('todo tree', () => {
   describe('buildTodoTree', () => {
@@ -12,8 +14,8 @@ describe('todo tree', () => {
 
     it('should return a flat list of items without children for an input list without parents', () => {
       const input: Todo[] = [
-        { id: 'a', title: 'a', complete: false, createdAt: new Date(), contexts: [], notes: [], tags: [] },
-        { id: 'b', title: 'b', complete: false, createdAt: new Date(), contexts: [], notes: [], tags: [] }
+        baseTodo('a','a'),
+        baseTodo('b','b')
       ]
       const output = buildTodoTree(input)
       const expectedOutput = input.map(withEmptyChildList)
@@ -21,8 +23,8 @@ describe('todo tree', () => {
     })
 
     it('should include todos with a parent within the parents child array', () => {
-      const parentTodo = { id: 'a', title: 'I am a parent', complete: false, createdAt: new Date(), contexts: [], notes: [], tags: [] }
-      const childTodo = { id: 'b', title: 'I am a child', parentTaskId: 'a', complete: false, createdAt: new Date(), contexts: [], notes: [], tags: [] }
+      const parentTodo = baseTodo('a', 'I am a parent')
+      const childTodo = { ...baseTodo('b', 'I am a child'), parentTaskId: 'a' }
       const input: Todo[] = [
         parentTodo,
         childTodo
@@ -35,8 +37,8 @@ describe('todo tree', () => {
     })
 
     it('should not include todos with a parent in the root list', () => {
-      const parentTodo = { id: 'a', title: 'I am a parent', complete: false, createdAt: new Date(), contexts: [], notes: [], tags: [] }
-      const childTodo = { id: 'b', title: 'I am a child', parentTaskId: 'a', complete: false, createdAt: new Date(), contexts: [], notes: [], tags: [] }
+      const parentTodo = baseTodo('a', 'I am a parent')
+      const childTodo = { ...baseTodo('b', 'I am a child'), parentTaskId: 'a' }
       const input: Todo[] = [
         parentTodo,
         childTodo
@@ -52,7 +54,7 @@ describe('todo tree', () => {
   describe('summarising', () => {
     describe('SummariseDueDates', () => {
       it('should return an empty list for a tree with no children and no due date', () => {
-        const todo: Todo = { id: 'a', title: 'a', complete: false, createdAt: new Date(), contexts: [], notes: [], tags: [] }
+        const todo: Todo = baseTodo('a','a')
         const tree = buildTodoTree([todo])[0]
         const summarisedTree = SummariseDueDates(tree)
         expect(summarisedTree.summary.dueDates).to.deep.eq([])
@@ -60,7 +62,7 @@ describe('todo tree', () => {
 
       it('root summary should only include due date of root for a tree with no children', () => {
         const dueDate = new Date('2050-01-15')
-        const todo: Todo = { id: 'a', title: 'a', complete: false, createdAt: new Date(), contexts: [], notes: [], tags: [], dueDate }
+        const todo: Todo = { ...baseTodo('a','a'), dueDate }
         const tree = buildTodoTree([todo])[0]
         const summarisedTree = SummariseDueDates(tree)
         expect(summarisedTree.summary.dueDates).to.deep.eq([dueDate])
@@ -69,10 +71,10 @@ describe('todo tree', () => {
       it('root summary should include due dates of children for a root with children', () => {
         const dueDate = new Date('2050-01-15')
         const todos = [
-          { id: 'a', title: 'I am a parent', complete: false, createdAt: new Date(), contexts: [], notes: [], tags: [], dueDate: new Date('2050-01-15') },
-          { id: 'b', title: 'I am a child', parentTaskId: 'a', complete: false, createdAt: new Date(), contexts: [], notes: [], tags: [], dueDate: new Date('2060-02-16') },
-          { id: 'c', title: 'I am another child', parentTaskId: 'a', complete: false, createdAt: new Date(), contexts: [], notes: [], tags: [], dueDate: new Date('2070-03-17') },
-          { id: 'd', title: 'child without due date', parentTaskId: 'a', complete: false, createdAt: new Date(), contexts: [], notes: [], tags: [] }
+          { ...baseTodo('a', 'I am a parent'), dueDate },
+          { ...baseTodo('b', 'I am a child'), parentTaskId: 'a', dueDate: new Date('2060-02-16') },
+          { ...baseTodo('c', 'I am another child'), parentTaskId: 'a', dueDate: new Date('2070-03-17') },
+          { ...baseTodo('d', 'child without due date'), parentTaskId: 'a' }
         ]
         const tree = buildTodoTree(todos)[0]
         const summarisedTree = SummariseDueDates(tree)
@@ -82,11 +84,11 @@ describe('todo tree', () => {
       it('root summary should include due dates of all decendent children', () => {
         const dueDate = new Date('2050-01-15')
         const todos = [
-          { id: 'a', title: 'I am a parent', complete: false, createdAt: new Date(), contexts: [], notes: [], tags: [], dueDate: new Date('2050-01-15') },
-          { id: 'b', title: 'I am a child', parentTaskId: 'a', complete: false, createdAt: new Date(), contexts: [], notes: [], tags: [], dueDate: new Date('2060-02-16') },
-          { id: 'c', title: 'I am a grandchild', parentTaskId: 'b', complete: false, createdAt: new Date(), contexts: [], notes: [], tags: [], dueDate: new Date('2070-03-17') },
-          { id: 'd', title: 'I am a great grandchild', parentTaskId: 'c', complete: false, createdAt: new Date(), contexts: [], notes: [], tags: [], dueDate: new Date('2080-04-18') },
-          { id: 'd', title: 'I am a great grandchild', parentTaskId: 'c', complete: false, createdAt: new Date(), contexts: [], notes: [], tags: [], dueDate: new Date('2090-05-19') }
+          { ...baseTodo('a', 'I am a parent'), dueDate: new Date('2050-01-15') },
+          { ...baseTodo('b','I am a child'), parentTaskId: 'a', dueDate: new Date('2060-02-16') },
+          { ...baseTodo('c','I am a grandchild'), parentTaskId: 'b', dueDate: new Date('2070-03-17') },
+          { ...baseTodo('d','I am a great grandchild'), parentTaskId: 'c', dueDate: new Date('2080-04-18') },
+          { ...baseTodo('e', 'I am a great grandchild'), parentTaskId: 'c', dueDate: new Date('2090-05-19') }
         ]
         const tree = buildTodoTree(todos)[0]
         const summarisedTree = SummariseDueDates(tree)
