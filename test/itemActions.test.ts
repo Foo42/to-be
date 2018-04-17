@@ -1,4 +1,4 @@
-import { changeTitle, markCompleted, TodoUpdate, addContexts, setEstimate, setParentTask, addTags, setDueDate, addNote } from '../src/core/actions'
+import { changeTitle, markCompleted, TodoUpdate, addContexts, setEstimate, setParentTask, addTags, setDueDate, addNote, addBlockingTask } from '../src/core/actions'
 import { assert } from 'chai'
 import { applyListAction } from '../src/core/evolveList'
 import { todo, Note } from '../src/core/todo'
@@ -88,4 +88,15 @@ describe('item actions.', () => {
       assert.deepEqual(original.notes, [])
     })
   })
+
+  describe('addBlockingTask', () => {
+    it('should add a blocking task to the list', () => {
+      const original = todo('123', 'do stuff')
+      const other = todo('456', 'do this stuff first!')
+      const updated = applyUpdate(original, addBlockingTask(other.id))
+      assert.deepEqual(updated.blockingTaskIds, [other.id])
+      assert.deepEqual(original.blockingTaskIds, [])
+    })
+  })
+
 })

@@ -13,6 +13,7 @@ export interface Todo {
   estimateMinutes?: number
   parentTaskId?: string
   dueDate?: Date
+  blockingTaskIds: string[]
 }
 
 function parseContexts (rawContexts: any): string[] {
@@ -69,6 +70,13 @@ function parseTags (rawTags: any): {name: string}[] {
   })
 }
 
+function parseAsString (raw: any): string {
+  if (isString(raw)) {
+    return raw
+  }
+  throw new Error(`Input was expected to be a string but was ${typeof raw}`)
+}
+
 function parseDate (rawDate: string): Date {
   const date = new Date(rawDate)
   if (isNaN(date.getTime())) {
@@ -78,7 +86,7 @@ function parseDate (rawDate: string): Date {
 }
 
 export function deserialiseTodo (raw: Dict<any>): Todo {
-  const { id, title, complete, createdAt, contexts, estimateMinutes, parentTaskId, tags, dueDate, notes= [] } = raw
+  const { id, title, complete, createdAt, contexts, estimateMinutes, parentTaskId, tags, dueDate, notes = [], blockingTasks = [] } = raw
   if (!isString(id)) {
     throw new Error('missing or malformed id')
   }
@@ -103,6 +111,9 @@ export function deserialiseTodo (raw: Dict<any>): Todo {
   if (!isArray(notes)) {
     throw new Error('mis-typed field "notes". Should be array.')
   }
+  if (!isArray(blockingTasks)) {
+    throw new Error('mis-typed field "blockingTasks". Should be array.')
+  }
 
   const parsedCreatedAt = isDate(createdAt) ? createdAt : new Date(Date.parse(createdAt))
   return {
@@ -115,7 +126,8 @@ export function deserialiseTodo (raw: Dict<any>): Todo {
     notes: parseArray(notes, parseNote),
     estimateMinutes,
     parentTaskId,
-    dueDate: dueDate
+    dueDate: dueDate,
+    blockingTaskIds: parseArray(blockingTasks, parseAsString)
   }
 }
 
@@ -130,7 +142,8 @@ export function todo (id: string, title: string): Todo {
     notes: [],
     estimateMinutes: undefined,
     parentTaskId: undefined,
-    dueDate: undefined
+    dueDate: undefined,
+    blockingTaskIds: []
   }
 }
 

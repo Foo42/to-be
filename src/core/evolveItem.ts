@@ -27,6 +27,9 @@ export function applyUpdate (original: Todo, action: TodoUpdate): Todo {
     case 'addNote':
       return { ...original, notes: [...original.notes, action.note] }
 
+    case 'addBlockingTask':
+      return { ...original, blockingTaskIds: [...original.blockingTaskIds, action.taskId] }
+
     default:
       const x: never = action
       throw new Error('unsupported updated type')

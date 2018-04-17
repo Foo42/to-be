@@ -51,6 +51,12 @@ export interface AddNote {
 }
 export const addNote = (note: Note): AddNote => ({ type: 'addNote', note })
 
+export interface AddBlockingTask {
+  type: 'addBlockingTask'
+  taskId: string
+}
+export const addBlockingTask = (blockingTaskId: string): AddBlockingTask => ({ type: 'addBlockingTask', taskId: blockingTaskId })
+
 export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
   const type = raw.type
   if (!isString(type)) {
@@ -146,9 +152,17 @@ export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
       return addNote(parseNote(note))
     }
 
+    case 'addBlockingTask': {
+      const { taskId } = raw
+      if (!isString(taskId)) {
+        throw new Error('Malformed addNote update. Missing or mis-typed field "taskId"')
+      }
+      return addBlockingTask(taskId)
+    }
+
     default:
       throw new Error(`Malformed todo update type: '${type}'`)
   }
 }
 
-export type TodoUpdate = ChangeTitle | MarkCompleted | AddContexts | SetEstimate | SetParentTask | AddTags | SetDueDate | AddNote
+export type TodoUpdate = ChangeTitle | MarkCompleted | AddContexts | SetEstimate | SetParentTask | AddTags | SetDueDate | AddNote | AddBlockingTask

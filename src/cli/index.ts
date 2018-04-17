@@ -6,7 +6,7 @@ import { writeFileSync, appendFileSync } from 'fs'
 import { appendActionToFile } from '../file/save'
 import { loadActionsFromFile, buildStateFromActions } from '../file/load'
 import * as path from 'path'
-import { markCompleted, addContexts, changeTitle, setEstimate, setParentTask, addTags, setDueDate, addNote } from '../core/actions'
+import { markCompleted, addContexts, changeTitle, setEstimate, setParentTask, addTags, setDueDate, addNote, addBlockingTask } from '../core/actions'
 import { allowAnyTodo, isIncomplete, intersectionOf, allContextsActive, noLongerThan } from '../core/filters/index'
 import { isUndefined, isString } from 'util'
 import * as readline from 'readline'
@@ -194,6 +194,18 @@ commander
     })
   })
 
+commander
+  .command('edit add-blocking-task [<blocker>] [<id>]')
+  .action((options) => {
+    const { blocker, id } = options.allSubCommands
+    const gettingTargetId = id ? Promise.resolve(id) : todoIdPicker('target todo (the blocked todo)')
+    const gettingBlockerId = blocker ? Promise.resolve(blocker) : gettingTargetId.then(() => todoIdPicker('blocking todo'))
+    return Promise.all([gettingTargetId, gettingBlockerId]).then(([id, blockerId]) => {
+      const update = updateItemInList(id, addBlockingTask(blockerId))
+      return appendActionToFile(update, todoFilePath)
+    })
+  })
+
 function promptInput (question: string): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     const rl = readline.createInterface({
@@ -271,7 +283,15 @@ function renderTodo (todo: Todo | TreeNode<Todo>, prefix?: string): string {
   if (prefix) {
     parts.push(prefix)
   }
-  parts.push(`[${todo.complete ? 'x' : ' '}]`)
+
+  let checkContents = ' '
+  if(todo.complete){
+    checkContents = 'x'
+  } else if (todo.blockingTaskIds.length > 0){
+    checkContents = 'BLOCKED'
+  }
+  parts.push(`[${checkContents}]`)
+
   parts.push(todo.title)
   if (todo.contexts.length) {
     parts.push(todo.contexts.map(context => `@${context}`).join(', '))
