@@ -285,9 +285,9 @@ function renderTodo (todo: Todo | TreeNode<Todo>, prefix?: string): string {
   }
 
   let checkContents = ' '
-  if(todo.complete){
-    checkContents = 'x'
-  } else if (todo.blockingTaskIds.length > 0){
+  if (todo.complete) {
+    checkContents = '✓'
+  } else if (todo.blockingTaskIds.length > 0) {
     checkContents = 'BLOCKED'
   }
   parts.push(`[${checkContents}]`)
