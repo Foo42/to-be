@@ -7,7 +7,7 @@ import { appendActionToFile } from '../file/save'
 import { loadActionsFromFile, buildStateFromActions } from '../file/load'
 import * as path from 'path'
 import { markCompleted, addContexts, changeTitle, setEstimate, setParentTask, addTags, setDueDate, addNote, addBlockingTask } from '../core/actions'
-import { allowAnyTodo, isIncomplete, intersectionOf, allContextsActive, noLongerThan } from '../core/filters/index'
+import { allowAnyTodo, isIncomplete, intersectionOf, allContextsActive, noLongerThan, notBlocked } from '../core/filters/index'
 import { isUndefined, isString } from 'util'
 import * as readline from 'readline'
 import * as Guid from 'guid'
@@ -17,6 +17,7 @@ import { flatMap } from 'lodash'
 import { dueSoonest } from '../core/sorters'
 import { quickAddParse } from './quickAdd'
 import * as chalk from 'chalk'
+import { keyBy } from 'lodash'
 
 const defaultFilePath = path.join(process.cwd(), 'todo.log.yml')
 const todoFilePath = process.env.TODO_FILE || defaultFilePath
@@ -55,8 +56,13 @@ commander
 commander
   .command('next')
   .option('available-time', true)
-  .action(({ flags }) => {
+  .action(async ({ flags }) => {
+    const allTodos = await loadActionsFromFile(todoFilePath).then(buildStateFromActions)
+    const todoDict = keyBy(allTodos, 'id')
+    const isComplete = (id: string) => (todoDict[id] || { complete: true }).complete
+    const actionableNowFilter = intersectionOf(isIncomplete, (todo) => allContextsActive(todo, activeContexts), notBlocked(isComplete))
     let filter = actionableNowFilter
+
     const timeString = flags['available-time']
     if (isString(timeString)) {
       const minutes = parseInt(timeString, 10)

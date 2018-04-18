@@ -1,6 +1,6 @@
 import { Todo, todo } from '../src/core/todo'
 import { expect } from 'chai'
-import { allContextsActive, noLongerThan } from '../src/core/filters'
+import { allContextsActive, noLongerThan, notBlocked } from '../src/core/filters'
 
 const baseTodo = todo
 
@@ -51,5 +51,32 @@ describe('filters.', () => {
       }
       expect(noLongerThan(2)(todo)).to.eql(false)
     })
+  })
+
+  describe('notBlocked', () => {
+    const idOfCompleteTask = '1234'
+    const idOfInCompleteTask = '5678'
+    const isTaskComplete = (id: string) => id === idOfCompleteTask
+    it('returns true for todos with no blocking tasks', () => {
+      const todo = {
+        ...baseTodo('1234', 'not blocked')
+      }
+      expect(notBlocked(isTaskComplete)(todo)).to.eql(true)
+    })
+    it('returns false for todos with any incomplete blocking tasks', () => {
+      const todo: Todo = {
+        ...baseTodo('someId', 'not blocked'),
+        blockingTaskIds: [idOfCompleteTask, idOfInCompleteTask]
+      }
+      expect(notBlocked(isTaskComplete)(todo)).to.eql(false)
+    })
+    it('returns true for todos with blocking tasks which are all complete', () => {
+      const todo: Todo = {
+        ...baseTodo('someId', 'not blocked'),
+        blockingTaskIds: [idOfCompleteTask]
+      }
+      expect(notBlocked(isTaskComplete)(todo)).to.eql(true)
+    })
+
   })
 })
