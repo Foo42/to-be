@@ -13,11 +13,10 @@ import * as readline from 'readline'
 import * as Guid from 'guid'
 import { NOTFOUND } from 'dns'
 import { TreeNode, buildTodoTree, SummariseDueDates, deepSort, deepSortAll } from '../core/tree'
-import { flatMap } from 'lodash'
+import { flatMap, keyBy } from 'lodash'
 import { dueSoonest } from '../core/sorters'
 import { quickAddParse } from './quickAdd'
 import * as chalk from 'chalk'
-import { keyBy } from 'lodash'
 
 const defaultFilePath = path.join(process.cwd(), 'todo.log.yml')
 const todoFilePath = process.env.TODO_FILE || defaultFilePath

@@ -612,3 +612,44 @@
     notes: []
     blockingTaskIds: []
   time: 2018-04-17T06:38:28.731Z
+- type: updateItem
+  id: 33f85894-9df6-67de-4372-741acf5cf8e9
+  update:
+    type: markCompleted
+  time: 2018-04-18T07:18:35.863Z
+- type: updateItem
+  id: c2407a7d-d549-01ab-b0f5-6c7ef78fe747
+  update:
+    type: markCompleted
+  time: 2018-04-18T07:18:53.513Z
+- type: updateItem
+  id: 5dc61426-2683-b092-6c73-3772da751442
+  update:
+    type: markCompleted
+  time: 2018-04-18T07:19:53.920Z
+- type: addToList
+  item:
+    id: 6c384164-e622-9603-45ab-25b99163a0d5
+    title: >-
+      build tree summariser which collects whether a (sub)tree has any
+      actionable leaves
+    complete: false
+    createdAt: 2018-04-19T06:45:27.209Z
+    contexts: []
+    tags: []
+    notes: []
+    parentTaskId: ffa0d671-83ec-7f00-dc29-899782a58528
+    blockingTaskIds: []
+  time: 2018-04-19T06:45:27.209Z
+- type: addToList
+  item:
+    id: 0fb1c187-b2f7-6699-7e18-0059260cf597
+    title: filter which can act on trees rather than just lists
+    complete: false
+    createdAt: 2018-04-19T06:46:03.309Z
+    contexts: []
+    tags: []
+    notes: []
+    parentTaskId: ffa0d671-83ec-7f00-dc29-899782a58528
+    blockingTaskIds: []
+  time: 2018-04-19T06:46:03.309Z

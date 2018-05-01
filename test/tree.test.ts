@@ -1,5 +1,5 @@
 import { Todo, todo } from '../src/core/todo'
-import { buildTodoTree, TreeNode, SummariseDueDates } from '../src/core/tree'
+import { buildTodoTree, TreeNode, SummariseDueDates, summariseActionableTasksWithin } from '../src/core/tree'
 import { expect } from 'chai'
 
 const baseTodo = todo
@@ -14,8 +14,8 @@ describe('todo tree', () => {
 
     it('should return a flat list of items without children for an input list without parents', () => {
       const input: Todo[] = [
-        baseTodo('a','a'),
-        baseTodo('b','b')
+        baseTodo('a', 'a'),
+        baseTodo('b', 'b')
       ]
       const output = buildTodoTree(input)
       const expectedOutput = input.map(withEmptyChildList)
@@ -54,7 +54,7 @@ describe('todo tree', () => {
   describe('summarising', () => {
     describe('SummariseDueDates', () => {
       it('should return an empty list for a tree with no children and no due date', () => {
-        const todo: Todo = baseTodo('a','a')
+        const todo: Todo = baseTodo('a', 'a')
         const tree = buildTodoTree([todo])[0]
         const summarisedTree = SummariseDueDates(tree)
         expect(summarisedTree.summary.dueDates).to.deep.eq([])
@@ -62,7 +62,7 @@ describe('todo tree', () => {
 
       it('root summary should only include due date of root for a tree with no children', () => {
         const dueDate = new Date('2050-01-15')
-        const todo: Todo = { ...baseTodo('a','a'), dueDate }
+        const todo: Todo = { ...baseTodo('a', 'a'), dueDate }
         const tree = buildTodoTree([todo])[0]
         const summarisedTree = SummariseDueDates(tree)
         expect(summarisedTree.summary.dueDates).to.deep.eq([dueDate])
@@ -85,9 +85,9 @@ describe('todo tree', () => {
         const dueDate = new Date('2050-01-15')
         const todos = [
           { ...baseTodo('a', 'I am a parent'), dueDate: new Date('2050-01-15') },
-          { ...baseTodo('b','I am a child'), parentTaskId: 'a', dueDate: new Date('2060-02-16') },
-          { ...baseTodo('c','I am a grandchild'), parentTaskId: 'b', dueDate: new Date('2070-03-17') },
-          { ...baseTodo('d','I am a great grandchild'), parentTaskId: 'c', dueDate: new Date('2080-04-18') },
+          { ...baseTodo('b', 'I am a child'), parentTaskId: 'a', dueDate: new Date('2060-02-16') },
+          { ...baseTodo('c', 'I am a grandchild'), parentTaskId: 'b', dueDate: new Date('2070-03-17') },
+          { ...baseTodo('d', 'I am a great grandchild'), parentTaskId: 'c', dueDate: new Date('2080-04-18') },
           { ...baseTodo('e', 'I am a great grandchild'), parentTaskId: 'c', dueDate: new Date('2090-05-19') }
         ]
         const tree = buildTodoTree(todos)[0]
@@ -95,6 +95,43 @@ describe('todo tree', () => {
         const actualDateSet = new Set(summarisedTree.summary.dueDates)
         const expectedDateSet = new Set([new Date('2050-01-15'), new Date('2060-02-16'), new Date('2070-03-17'), new Date('2080-04-18'), new Date('2090-05-19')])
         expect(actualDateSet).to.deep.equal(expectedDateSet)
+      })
+    })
+
+    describe('summariseActionableTasksWithin', () => {
+      it('should return 0 for a tree with no children and a inactionable root', () => {
+        const inactionableTodo: Todo = baseTodo('a', 'a')
+        const isActionable = (todo: Todo) => false
+        const tree = buildTodoTree([inactionableTodo])[0]
+        const summarisedTree = summariseActionableTasksWithin(tree, isActionable)
+        expect(summarisedTree.summary.actionableWithin).to.deep.eq(0)
+      })
+      it('should return 1 for a tree with no children and an actionable root', () => {
+        const actionableTodo: Todo = baseTodo('a', 'a')
+        const isActionable = (todo: Todo) => true
+        const tree = buildTodoTree([actionableTodo])[0]
+        const summarisedTree = summariseActionableTasksWithin(tree, isActionable)
+        expect(summarisedTree.summary.actionableWithin).to.deep.eq(1)
+      })
+      it('should return number of todos in tree when tree of todos all actionabe', () => {
+        const actionableTodo: Todo = baseTodo('a', 'a')
+        const childA: Todo = { ...baseTodo('childA', 'Child A'), parentTaskId: 'a' }
+        const childB: Todo = { ...baseTodo('childB', 'Child B'), parentTaskId: 'a' }
+        const grandchildA: Todo = { ...baseTodo('grandchildA', 'Grandchild A'), parentTaskId: 'childA' }
+        const isActionable = (todo: Todo) => true
+        const tree = buildTodoTree([actionableTodo, childA, childB, grandchildA])[0]
+        const summarisedTree = summariseActionableTasksWithin(tree, isActionable)
+        expect(summarisedTree.summary.actionableWithin).to.deep.eq(4)
+      })
+      it('should return number of active todos in tree when tree has some actionable and some not', () => {
+        const actionableTodo: Todo = baseTodo('a', 'a')
+        const childA: Todo = { ...baseTodo('childA', 'Child A'), parentTaskId: 'a' }
+        const childB: Todo = { ...baseTodo('childB', 'Child B'), parentTaskId: 'a' }
+        const grandchildA: Todo = { ...baseTodo('grandchildA', 'Grandchild A'), parentTaskId: 'childA' }
+        const isActionable = (todo: Todo) => todo.id !== 'childA'
+        const tree = buildTodoTree([actionableTodo, childA, childB, grandchildA])[0]
+        const summarisedTree = summariseActionableTasksWithin(tree, isActionable)
+        expect(summarisedTree.summary.actionableWithin).to.deep.eq(3)
       })
     })
   })

@@ -77,6 +77,5 @@ describe('filters.', () => {
       }
       expect(notBlocked(isTaskComplete)(todo)).to.eql(true)
     })
-
   })
 })

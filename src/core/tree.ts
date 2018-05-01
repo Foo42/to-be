@@ -1,5 +1,6 @@
 import { Todo } from './todo'
-import { groupBy, Dictionary, partition, assign, flatMap } from 'lodash'
+import { groupBy, Dictionary, partition, assign, flatMap, sumBy } from 'lodash'
+import { Predicate } from './predicate'
 
 export type TreeNode<T, SummaryT = undefined> = T & {children: TreeNode<T, SummaryT>[], summary: SummaryT}
 export type TodoTree<SummaryT = undefined> = TreeNode<Todo, SummaryT>
@@ -31,6 +32,19 @@ export function SummariseDueDates<PrevSummaryT> (todos: TodoTree<PrevSummaryT>):
   }
   const ownSummary: (PrevSummaryT & DueDateSummary) = assign({}, todos.summary, { dueDates: combinedDueDates })
   return { ...todos, summary: ownSummary, children: childrenWithSummaries }
+}
+
+export interface ActionableWithinSummary {
+  actionableWithin: number
+}
+export function summariseActionableTasksWithin<PrevSummaryT> (todos: TodoTree<PrevSummaryT>, isActionable: Predicate<Todo>): TodoTree<PrevSummaryT & ActionableWithinSummary> {
+  const selfCount = isActionable(todos) ? 1 : 0
+  const summarisedChildren = todos.children.map(child => summariseActionableTasksWithin(child, isActionable))
+
+  const actionableWithinSummary: ActionableWithinSummary = { actionableWithin: selfCount + sumBy(summarisedChildren, child => child.summary.actionableWithin) }
+  const summary = Object.assign({}, todos.summary, actionableWithinSummary)
+
+  return Object.assign({}, todos, { children: summarisedChildren }, { summary })
 }
 
 export type Sorter<T> = (a: T, b: T) => number
