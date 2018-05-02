@@ -56,3 +56,11 @@ export function deepSort<T> (todos: TodoTree<T>, sorter: Sorter<TodoTree<T>>): T
 export function deepSortAll<T> (trees: TodoTree<T>[], sorter: Sorter<TodoTree<T>>): TodoTree<T>[] {
   return trees.map(tree => deepSort(tree, sorter)).sort(sorter)
 }
+
+export function deepFilter<T> (todos: TodoTree<T>, filter: Predicate<TodoTree<T>>): TodoTree<T> {
+  const filteredChildren = deepFilterAll(todos.children, filter)
+  return { ...todos, children: filteredChildren }
+}
+export function deepFilterAll<T> (todos: TodoTree<T>[], filter: Predicate<TodoTree<T>>): TodoTree<T>[] {
+  return todos.filter(filter).map(child => deepFilter(child, filter))
+}

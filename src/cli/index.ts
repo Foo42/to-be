@@ -7,12 +7,12 @@ import { appendActionToFile } from '../file/save'
 import { loadActionsFromFile, buildStateFromActions } from '../file/load'
 import * as path from 'path'
 import { markCompleted, addContexts, changeTitle, setEstimate, setParentTask, addTags, setDueDate, addNote, addBlockingTask } from '../core/actions'
-import { allowAnyTodo, isIncomplete, intersectionOf, allContextsActive, noLongerThan, notBlocked } from '../core/filters/index'
+import { allowAnyTodo, isIncomplete, intersectionOf, allContextsActive, noLongerThan, notBlocked, isLeaf } from '../core/filters/index'
 import { isUndefined, isString } from 'util'
 import * as readline from 'readline'
 import * as Guid from 'guid'
 import { NOTFOUND } from 'dns'
-import { TreeNode, buildTodoTree, SummariseDueDates, deepSort, deepSortAll } from '../core/tree'
+import { TreeNode, buildTodoTree, SummariseDueDates, deepSort, deepSortAll, summariseActionableTasksWithin, deepFilterAll } from '../core/tree'
 import { flatMap, keyBy } from 'lodash'
 import { dueSoonest } from '../core/sorters'
 import { quickAddParse } from './quickAdd'
@@ -21,8 +21,6 @@ import * as chalk from 'chalk'
 const defaultFilePath = path.join(process.cwd(), 'todo.log.yml')
 const todoFilePath = process.env.TODO_FILE || defaultFilePath
 const activeContexts = (process.env.ACTIVE_CONTEXTS ? process.env.ACTIVE_CONTEXTS.split(',') : []).map(context => context.trim().toLowerCase())
-
-const actionableNowFilter = intersectionOf(isIncomplete, (todo) => allContextsActive(todo, activeContexts))
 
 const commander = new Commander()
 
@@ -56,28 +54,30 @@ commander
   .command('next')
   .option('available-time', true)
   .action(async ({ flags }) => {
-    const allTodos = await loadActionsFromFile(todoFilePath).then(buildStateFromActions)
+    const allTodos: Todo[] = await loadActionsFromFile(todoFilePath).then(buildStateFromActions)
+
     const todoDict = keyBy(allTodos, 'id')
     const isComplete = (id: string) => (todoDict[id] || { complete: true }).complete
-    const actionableNowFilter = intersectionOf(isIncomplete, (todo) => allContextsActive(todo, activeContexts), notBlocked(isComplete))
-    let filter = actionableNowFilter
 
+    const conditions = [
+      isIncomplete,
+      isLeaf,
+      (todo: Todo) => allContextsActive(todo, activeContexts),
+      notBlocked(isComplete)
+    ]
     const timeString = flags['available-time']
     if (isString(timeString)) {
       const minutes = parseInt(timeString, 10)
-      console.log(`Exluding tasks with estimates longer than ${minutes} minutes`)
-      filter = intersectionOf(actionableNowFilter, noLongerThan(minutes))
+      conditions.push(noLongerThan(minutes))
     }
+    const isActionableNow = intersectionOf(...conditions)
 
-    return loadActionsFromFile(todoFilePath)
-      .then(buildStateFromActions)
-      .then(todos => todos.filter(filter))
-      .then(todos => buildTodoTree(todos))
-      .then(trees => trees.map(SummariseDueDates))
-      .then(trees => deepSortAll(trees, dueSoonest))
-      .then(renderTodoTree)
-      .then(console.log)
-      .catch(console.error)
+    const fullTrees = buildTodoTree(allTodos)
+      .map(tree => summariseActionableTasksWithin(tree, isActionableNow))
+
+    const filteredTrees = deepFilterAll(fullTrees, (tree) => !tree.complete && tree.summary.actionableWithin > 0)
+    const sorted = deepSortAll(filteredTrees.map(SummariseDueDates), dueSoonest)
+    return console.log(renderTodoTree(sorted))
   })
 
 commander
@@ -85,12 +85,6 @@ commander
   .option('available-time', true)
   .action(({ flags }) => {
     let filter = isIncomplete
-    const timeString = flags['available-time']
-    if (isString(timeString)) {
-      const minutes = parseInt(timeString, 10)
-      console.log(`Exluding tasks with estimates longer than ${minutes} minutes`)
-      filter = intersectionOf(actionableNowFilter, noLongerThan(minutes))
-    }
     return showTreeFromFile(todoFilePath, filter)
   })
 
@@ -273,10 +267,12 @@ function renderTodoList (todos: Todo[], showNumbers = false): string {
 
 function preRenderTodoTree (todos: TreeNode<Todo>[], currentIndent = '', numberingPrefix = ''): string[] {
   const indentUnit = '  '
+  const isTopLevel = currentIndent === ''
   return flatMap(todos, (todo, i) => {
     const prefix = `${currentIndent}${numberingPrefix ? (numberingPrefix + i) : ''}`
     const numberingPrefixForSubTree = numberingPrefix ? prefix + '.' : ''
-    return [renderTodo(todo, prefix), ...preRenderTodoTree(todo.children, currentIndent + indentUnit, numberingPrefixForSubTree)]
+    const trailingLines = isTopLevel ? [''] : []
+    return [renderTodo(todo, prefix), ...preRenderTodoTree(todo.children, currentIndent + indentUnit, numberingPrefixForSubTree), ...trailingLines]
   })
 }
 function renderTodoTree (todos: TreeNode<Todo>[], showNumbers = false): string {

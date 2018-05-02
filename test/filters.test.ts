@@ -1,6 +1,7 @@
 import { Todo, todo } from '../src/core/todo'
 import { expect } from 'chai'
-import { allContextsActive, noLongerThan, notBlocked } from '../src/core/filters'
+import { allContextsActive, noLongerThan, notBlocked, isLeaf } from '../src/core/filters'
+import { buildTodoTree, TodoTree } from '../src/core/tree'
 
 const baseTodo = todo
 
@@ -76,6 +77,24 @@ describe('filters.', () => {
         blockingTaskIds: [idOfCompleteTask]
       }
       expect(notBlocked(isTaskComplete)(todo)).to.eql(true)
+    })
+  })
+
+  describe('isLeaf', () => {
+    it('returns true for a todo without children', () => {
+      const todo = baseTodo('123', 'I have no children')
+      expect(isLeaf(todo)).to.eql(true)
+    })
+    it('returns true for a todo tree without children', () => {
+      const todo = baseTodo('123', 'I have no children')
+      const tree: TodoTree = buildTodoTree([todo])[0]
+      expect(isLeaf(tree)).to.eql(true)
+    })
+    it('returns false for a todo tree with children', () => {
+      const parent = baseTodo('parent', 'I have children')
+      const child = { ...baseTodo('child', 'I am a child'), parentTaskId: parent.id }
+      const tree: TodoTree = buildTodoTree([parent, child])[0]
+      expect(isLeaf(tree)).to.eql(false)
     })
   })
 })

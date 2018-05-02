@@ -1,5 +1,7 @@
 import { Todo } from '../todo'
 import { isUndefined } from 'util'
+import { Predicate } from '../predicate'
+import { TodoTree } from '../tree'
 
 export function isIncomplete (todo: Todo): boolean {
   return !todo.complete
@@ -27,4 +29,11 @@ export const intersectionOf = (...filters: FilterFunc[]) => (todo: Todo) => {
 export type IsTaskCompleteFunc = (id: string) => boolean
 export const notBlocked = (isComplete: IsTaskCompleteFunc) => (todo: Todo) => {
   return todo.blockingTaskIds.length === 0 || todo.blockingTaskIds.every(isComplete)
+}
+
+export function isLeaf (todo: Todo | TodoTree) {
+  if ('children' in todo && todo.children.length > 0) {
+    return false
+  }
+  return true
 }

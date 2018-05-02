@@ -1,5 +1,5 @@
 import { Todo, todo } from '../src/core/todo'
-import { buildTodoTree, TreeNode, SummariseDueDates, summariseActionableTasksWithin } from '../src/core/tree'
+import { buildTodoTree, TreeNode, SummariseDueDates, summariseActionableTasksWithin, deepFilter } from '../src/core/tree'
 import { expect } from 'chai'
 
 const baseTodo = todo
@@ -132,6 +132,23 @@ describe('todo tree', () => {
         const tree = buildTodoTree([actionableTodo, childA, childB, grandchildA])[0]
         const summarisedTree = summariseActionableTasksWithin(tree, isActionable)
         expect(summarisedTree.summary.actionableWithin).to.deep.eq(3)
+      })
+    })
+
+    describe('deepFilter', () => {
+      it('should remove any decendents which do not pass the predicate', () => {
+        const shouldRemoveTag = { name: 'removeMe' }
+        const actionableTodo: Todo = baseTodo('a', 'a')
+        const childA: Todo = { ...baseTodo('childA', 'Child A'), parentTaskId: 'a' }
+        const childB: Todo = { ...baseTodo('childB', 'Child B'), parentTaskId: 'a', tags: [shouldRemoveTag] }
+        const grandchildA: Todo = { ...baseTodo('grandchildA', 'Grandchild A'), parentTaskId: 'childA', tags: [shouldRemoveTag] }
+        const tree = buildTodoTree([actionableTodo, childA, childB, grandchildA])[0]
+
+        const predicate = (todo: Todo) => !todo.tags.some(tag => tag === shouldRemoveTag)
+        const filtered = deepFilter(tree, predicate)
+
+        expect(filtered.children.map(child => child.id)).to.deep.eq([childA.id])
+        expect(filtered.children[0].children).to.deep.eq([])
       })
     })
   })
