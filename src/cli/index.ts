@@ -295,7 +295,7 @@ function renderTodo (todo: Todo | TreeNode<Todo>, prefix?: string): string {
 
   parts.push(todo.title)
   if (todo.contexts.length) {
-    parts.push(todo.contexts.map(context => `@${context}`).join(', '))
+    parts.push(todo.contexts.map(context => chalk.default.blueBright(`@${context}`)).join(', '))
   }
   if (todo.tags.length) {
     parts.push(todo.tags.map(tag => `#${tag.name}`).join(', '))
