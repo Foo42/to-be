@@ -1,6 +1,7 @@
 import { Todo, todo } from '../src/core/todo'
-import { buildTodoTree, TreeNode, SummariseDueDates, summariseActionableTasksWithin, deepFilter } from '../src/core/tree'
+import { buildTodoTree, TreeNode, SummariseDueDates, summariseActionableTasksWithin, deepFilter, summariseTagsWithin } from '../src/core/tree'
 import { expect } from 'chai'
+import { keyBy } from 'lodash'
 
 const baseTodo = todo
 
@@ -132,6 +133,38 @@ describe('todo tree', () => {
         const tree = buildTodoTree([actionableTodo, childA, childB, grandchildA])[0]
         const summarisedTree = summariseActionableTasksWithin(tree, isActionable)
         expect(summarisedTree.summary.actionableWithin).to.deep.eq(3)
+      })
+    })
+
+    describe('summariseTagsWithin', () => {
+      it('should return no tags for a todo without tags', () => {
+        const todo: Todo = baseTodo('someId', 'some title')
+        const tree = buildTodoTree([todo])[0]
+        const summarised = summariseTagsWithin(tree)
+        expect(summarised.summary.tagsWithin).to.deep.equal({})
+      })
+
+      it('should return tags from a todo with tags', () => {
+        const todo: Todo = { ...baseTodo('someId', 'some title'), tags: [{ name: 'A' }, { name: 'B' }] }
+        const tree = buildTodoTree([todo])[0]
+        const summarised = summariseTagsWithin(tree)
+        expect(summarised.summary.tagsWithin).to.deep.equal(keyBy(todo.tags, 'name'))
+      })
+
+      it('should return set of all childrens tags', () => {
+        const rootTodo: Todo = { ...baseTodo('a', 'a'), tags: [{ name: 'a' },{ name: 'x' }] }
+        const childA: Todo = { ...baseTodo('childA', 'Child A'), parentTaskId: rootTodo.id, tags: [{ name: 'y' }] }
+        const childB: Todo = { ...baseTodo('childB', 'Child B'), parentTaskId: rootTodo.id, tags: [{ name: 'x' }, { name: 'y' }, { name: 'z' }] }
+        const tree = buildTodoTree([rootTodo, childA, childB])[0]
+
+        const summarised = summariseTagsWithin(tree)
+        const expectedTags = {
+          a: { name: 'a' },
+          x: { name: 'x' },
+          y: { name: 'y' },
+          z: { name: 'z' }
+        }
+        expect(summarised.summary.tagsWithin).to.deep.equal(expectedTags)
       })
     })
 

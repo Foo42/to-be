@@ -2,13 +2,16 @@ import * as Guid from 'guid'
 import { isString, isBoolean, isDate, isUndefined, isArray, isNumber } from 'util'
 import { Dict, isDict } from '../util/deserialising'
 
+export interface Tag {
+  name: string
+}
 export interface Todo {
   id: string
   title: string
   complete: boolean
   createdAt: Date
   contexts: string[]
-  tags: {name: string}[]
+  tags: Tag[]
   notes: {textMarkdown: string}[]
   estimateMinutes?: number
   parentTaskId?: string

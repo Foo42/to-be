@@ -1,6 +1,7 @@
-import { Todo } from './todo'
-import { groupBy, Dictionary, partition, assign, flatMap, sumBy } from 'lodash'
+import { Todo, Tag } from './todo'
+import { groupBy, Dictionary, partition, assign, flatMap, sumBy, keyBy } from 'lodash'
 import { Predicate } from './predicate'
+import { Dict } from '../cli/parser/configParser'
 
 export type TreeNode<T, SummaryT = undefined> = T & {children: TreeNode<T, SummaryT>[], summary: SummaryT}
 export type TodoTree<SummaryT = undefined> = TreeNode<Todo, SummaryT>
@@ -44,6 +45,17 @@ export function summariseActionableTasksWithin<PrevSummaryT> (todos: TodoTree<Pr
   const actionableWithinSummary: ActionableWithinSummary = { actionableWithin: selfCount + sumBy(summarisedChildren, child => child.summary.actionableWithin) }
   const summary = Object.assign({}, todos.summary, actionableWithinSummary)
 
+  return Object.assign({}, todos, { children: summarisedChildren }, { summary })
+}
+
+export interface TagsWithinSummary {
+  tagsWithin: Dict<Tag>
+}
+export function summariseTagsWithin<PrevSummaryT> (todos: TodoTree<PrevSummaryT>): TodoTree<PrevSummaryT & TagsWithinSummary> {
+  const summarisedChildren = todos.children.map(summariseTagsWithin)
+  const tagsFromChildren = summarisedChildren.map(child => child.summary.tagsWithin).reduce((acc, item) => ({ ...acc, ...item }), {} as Dict<Tag>)
+  const combined = { ...keyBy(todos.tags, 'name'), ...tagsFromChildren }
+  const summary = Object.assign({}, todos.summary, { tagsWithin: combined })
   return Object.assign({}, todos, { children: summarisedChildren }, { summary })
 }
 
