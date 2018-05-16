@@ -658,3 +658,52 @@
   update:
     type: markCompleted
   time: 2018-05-02T16:45:29.998Z
+- type: addToList
+  item:
+    id: adaab986-4004-c15f-e8c0-8d7f51d480d6
+    title: >-
+      blocking tasks should inherit the earliest due date of any tasks they
+      block
+    complete: false
+    createdAt: 2018-05-02T16:59:01.555Z
+    contexts: []
+    tags: []
+    notes: []
+    blockingTaskIds: []
+  time: 2018-05-02T16:59:01.555Z
+- type: addToList
+  item:
+    id: adf09458-2d27-d6f4-e815-2c4c941c6fbc
+    title: sort by tag priority
+    complete: false
+    createdAt: 2018-05-04T06:56:21.398Z
+    contexts: []
+    tags: []
+    notes: []
+    parentTaskId: 2eb1f4e8-619a-c806-6c6e-11c0264efe9b
+    blockingTaskIds: []
+  time: 2018-05-04T06:56:21.398Z
+- type: addToList
+  item:
+    id: b9624a78-2cc0-f9f3-7db3-d30fa447d877
+    title: multi criteria sorter which uses successive sorters to resolve draws
+    complete: false
+    createdAt: 2018-05-04T06:59:34.866Z
+    contexts: []
+    tags: []
+    notes: []
+    parentTaskId: 2eb1f4e8-619a-c806-6c6e-11c0264efe9b
+    blockingTaskIds: []
+  time: 2018-05-04T06:59:34.866Z
+- type: addToList
+  item:
+    id: db2b2046-dfcf-ab59-8f9a-a1f737c1f133
+    title: summarise tags within
+    complete: false
+    createdAt: 2018-05-04T07:00:18.377Z
+    contexts: []
+    tags: []
+    notes: []
+    parentTaskId: adf09458-2d27-d6f4-e815-2c4c941c6fbc
+    blockingTaskIds: []
+  time: 2018-05-04T07:00:18.377Z
