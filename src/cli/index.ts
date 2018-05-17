@@ -12,11 +12,13 @@ import { isUndefined, isString } from 'util'
 import * as readline from 'readline'
 import * as Guid from 'guid'
 import { NOTFOUND } from 'dns'
-import { TreeNode, buildTodoTree, SummariseDueDates, deepSort, deepSortAll, summariseActionableTasksWithin, deepFilterAll } from '../core/tree'
+import { TreeNode, buildTodoTree, deepSort, deepSortAll, deepFilterAll } from '../core/tree'
 import { flatMap, keyBy } from 'lodash'
 import { dueSoonest } from '../core/sorters'
 import { quickAddParse } from './quickAdd'
 import * as chalk from 'chalk'
+import { SummariseDueDates } from '../core/tree/summarisers/dueDates'
+import { summariseActionableTasksWithin } from '../core/tree/summarisers/actionableWithin'
 
 const defaultFilePath = path.join(process.cwd(), 'todo.log.yml')
 const todoFilePath = process.env.TODO_FILE || defaultFilePath

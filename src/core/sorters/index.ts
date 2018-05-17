@@ -1,5 +1,5 @@
 import { last } from 'lodash'
-import { DueDateSummary } from '../tree'
+import { DueDateSummary } from '../tree/summarisers/dueDates'
 
 export type WithSummarisedDueDates = { summary: DueDateSummary }
 export function dueSoonest (a: WithSummarisedDueDates, b: WithSummarisedDueDates): number {
