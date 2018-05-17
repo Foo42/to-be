@@ -707,3 +707,25 @@
     parentTaskId: adf09458-2d27-d6f4-e815-2c4c941c6fbc
     blockingTaskIds: []
   time: 2018-05-04T07:00:18.377Z
+- type: updateItem
+  id: db2b2046-dfcf-ab59-8f9a-a1f737c1f133
+  update:
+    type: markCompleted
+  time: 2018-05-16T06:50:04.059Z
+- type: updateItem
+  id: b9624a78-2cc0-f9f3-7db3-d30fa447d877
+  update:
+    type: markCompleted
+  time: 2018-05-17T06:59:58.738Z
+- type: addToList
+  item:
+    id: a210f165-909a-f6d6-07f5-8876bdfe8a06
+    title: configurable tag priority
+    complete: false
+    createdAt: 2018-05-17T07:01:19.708Z
+    contexts: []
+    tags: []
+    notes: []
+    parentTaskId: adf09458-2d27-d6f4-e815-2c4c941c6fbc
+    blockingTaskIds: []
+  time: 2018-05-17T07:01:19.708Z
