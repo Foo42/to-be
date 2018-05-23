@@ -1,8 +1,8 @@
 import { assert } from 'chai'
-import { applyListAction } from '../src/core/evolveList'
-import { Todo, todo } from '../src/core/todo'
-import { addToList, updateItemInList } from '../src/core/listActions'
-import { changeTitle } from '../src/core/actions'
+import { applyListAction } from '../../src/core/evolveList'
+import { Todo, todo } from '../../src/core/todo'
+import { addToList, updateItemInList } from '../../src/core/listActions'
+import { changeTitle } from '../../src/core/actions'
 
 describe('list actions.', () => {
   describe('add to list', () => {

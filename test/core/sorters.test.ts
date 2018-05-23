@@ -1,7 +1,7 @@
-import { dueSoonest } from '../src/core/sorters'
+import { dueSoonest } from '../../src/core/sorters'
 import { expect } from 'chai'
-import { Sorter } from '../src/core/tree'
-import { multiLevelSorter } from '../src/core/sorters/multiLevel'
+import { Sorter } from '../../src/core/tree'
+import { multiLevelSorter } from '../../src/core/sorters/multiLevel'
 
 describe('sorters', () => {
   describe('dueSoonest', () => {

@@ -1,8 +1,8 @@
-import { changeTitle, markCompleted, TodoUpdate, addContexts, setEstimate, setParentTask, addTags, setDueDate, addNote, addBlockingTask } from '../src/core/actions'
+import { changeTitle, markCompleted, TodoUpdate, addContexts, setEstimate, setParentTask, addTags, setDueDate, addNote, addBlockingTask } from '../../src/core/actions'
 import { assert } from 'chai'
-import { applyListAction } from '../src/core/evolveList'
-import { todo, Note } from '../src/core/todo'
-import { applyUpdate } from '../src/core/evolveItem'
+import { applyListAction } from '../../src/core/evolveList'
+import { todo, Note } from '../../src/core/todo'
+import { applyUpdate } from '../../src/core/evolveItem'
 import { toASCII } from 'punycode'
 
 describe('item actions.', () => {

@@ -1,7 +1,7 @@
-import { Todo, todo } from '../src/core/todo'
+import { Todo, todo } from '../../src/core/todo'
 import { expect } from 'chai'
-import { allContextsActive, noLongerThan, notBlocked, isLeaf } from '../src/core/filters'
-import { buildTodoTree, TodoTree } from '../src/core/tree'
+import { allContextsActive, noLongerThan, notBlocked, isLeaf } from '../../src/core/filters'
+import { buildTodoTree, TodoTree } from '../../src/core/tree'
 
 const baseTodo = todo
 

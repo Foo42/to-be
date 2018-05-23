@@ -1,10 +1,10 @@
-import { Todo, todo } from '../src/core/todo'
-import { buildTodoTree, TreeNode, deepFilter } from '../src/core/tree'
+import { Todo, todo } from '../../src/core/todo'
+import { buildTodoTree, TreeNode, deepFilter } from '../../src/core/tree'
 import { expect } from 'chai'
 import { keyBy } from 'lodash'
-import { SummariseDueDates } from '../src/core/tree/summarisers/dueDates'
-import { summariseActionableTasksWithin } from '../src/core/tree/summarisers/actionableWithin'
-import { summariseTagsWithin } from '../src/core/tree/summarisers/tagsWithin'
+import { SummariseDueDates } from '../../src/core/tree/summarisers/dueDates'
+import { summariseActionableTasksWithin } from '../../src/core/tree/summarisers/actionableWithin'
+import { summariseTagsWithin } from '../../src/core/tree/summarisers/tagsWithin'
 
 const baseTodo = todo
 
