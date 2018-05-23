@@ -10,7 +10,23 @@ import { SummariseDueDates } from '../../core/tree/summarisers/dueDates'
 import { dueSoonest } from '../../core/sorters'
 import { renderTodoTree } from '../renderers'
 
-export const showNext = (todoFilePath: string, activeContexts: string[]) => async ({ flags }: {flags: Dict<any>}) => {
+interface Flags {
+  availableTime?: number
+}
+function parseFlags (flags: Dict<any>): Flags {
+  const timeString = flags['available-time']
+  if (isString(timeString)) {
+    const minutes = parseInt(timeString, 10)
+    return {
+      availableTime: minutes
+    }
+  }
+  return {}
+}
+
+export const showNext = (todoFilePath: string, activeContexts: string[]) => async (parsed: { flags: Dict<any> }) => {
+  const flags = parseFlags(parsed.flags)
+
   const allTodos: Todo[] = await loadActionsFromFile(todoFilePath).then(buildStateFromActions)
 
   const todoDict = keyBy(allTodos, 'id')
@@ -22,11 +38,11 @@ export const showNext = (todoFilePath: string, activeContexts: string[]) => asyn
     (todo: Todo) => allContextsActive(todo, activeContexts),
     notBlocked(isComplete)
   ]
-  const timeString = flags['available-time']
-  if (isString(timeString)) {
-    const minutes = parseInt(timeString, 10)
-    conditions.push(noLongerThan(minutes))
+
+  if (flags.availableTime) {
+    conditions.push(noLongerThan(flags.availableTime))
   }
+
   const isActionableNow = intersectionOf(...conditions)
 
   const fullTrees = buildTodoTree(allTodos)
