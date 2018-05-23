@@ -19,6 +19,8 @@ import { quickAddParse } from './quickAdd'
 import * as chalk from 'chalk'
 import { SummariseDueDates } from '../core/tree/summarisers/dueDates'
 import { summariseActionableTasksWithin } from '../core/tree/summarisers/actionableWithin'
+import { renderTodoTree, renderTodoList } from './renderers'
+import { showNext } from './commands/next'
 
 const defaultFilePath = path.join(process.cwd(), 'todo.log.yml')
 const todoFilePath = process.env.TODO_FILE || defaultFilePath
@@ -55,32 +57,7 @@ commander
 commander
   .command('next')
   .option('available-time', true)
-  .action(async ({ flags }) => {
-    const allTodos: Todo[] = await loadActionsFromFile(todoFilePath).then(buildStateFromActions)
-
-    const todoDict = keyBy(allTodos, 'id')
-    const isComplete = (id: string) => (todoDict[id] || { complete: true }).complete
-
-    const conditions = [
-      isIncomplete,
-      isLeaf,
-      (todo: Todo) => allContextsActive(todo, activeContexts),
-      notBlocked(isComplete)
-    ]
-    const timeString = flags['available-time']
-    if (isString(timeString)) {
-      const minutes = parseInt(timeString, 10)
-      conditions.push(noLongerThan(minutes))
-    }
-    const isActionableNow = intersectionOf(...conditions)
-
-    const fullTrees = buildTodoTree(allTodos)
-      .map(tree => summariseActionableTasksWithin(tree, isActionableNow))
-
-    const filteredTrees = deepFilterAll(fullTrees, (tree) => !tree.complete && tree.summary.actionableWithin > 0)
-    const sorted = deepSortAll(filteredTrees.map(SummariseDueDates), dueSoonest)
-    return console.log(renderTodoTree(sorted))
-  })
+  .action(showNext(todoFilePath, activeContexts))
 
 commander
   .command('list [<viewName>]')
@@ -258,60 +235,6 @@ function showTreeFromFile (todoFilePath: string, filter = isIncomplete) {
     .then(renderTodoTree)
     .then(console.log)
     .catch(console.error)
-}
-
-function renderTodoList (todos: Todo[], showNumbers = false): string {
-  return todos.map((todo, i) => {
-    const prefix = showNumbers ? `#${i}` : ''
-    return renderTodo(todo, prefix)
-  }).join('\n')
-}
-
-function preRenderTodoTree (todos: TreeNode<Todo>[], currentIndent = '', numberingPrefix = ''): string[] {
-  const indentUnit = '  '
-  const isTopLevel = currentIndent === ''
-  return flatMap(todos, (todo, i) => {
-    const prefix = `${currentIndent}${numberingPrefix ? (numberingPrefix + i) : ''}`
-    const numberingPrefixForSubTree = numberingPrefix ? prefix + '.' : ''
-    const trailingLines = isTopLevel ? [''] : []
-    return [renderTodo(todo, prefix), ...preRenderTodoTree(todo.children, currentIndent + indentUnit, numberingPrefixForSubTree), ...trailingLines]
-  })
-}
-function renderTodoTree (todos: TreeNode<Todo>[], showNumbers = false): string {
-  return preRenderTodoTree(todos, '', showNumbers ? '#' : '').join('\n')
-}
-
-function renderTodo (todo: Todo | TreeNode<Todo>, prefix?: string): string {
-  const parts: string[] = []
-  if (prefix) {
-    parts.push(prefix)
-  }
-
-  let checkContents = ' '
-  if (todo.complete) {
-    checkContents = '✓'
-  } else if (todo.blockingTaskIds.length > 0) {
-    checkContents = 'BLOCKED'
-  }
-  parts.push(`[${checkContents}]`)
-
-  parts.push(todo.title)
-  if (todo.contexts.length) {
-    parts.push(todo.contexts.map(context => chalk.default.blueBright(`@${context}`)).join(', '))
-  }
-  if (todo.tags.length) {
-    parts.push(todo.tags.map(tag => `#${tag.name}`).join(', '))
-  }
-  if (todo.estimateMinutes) {
-    parts.push(`[${todo.estimateMinutes} mins]`)
-  }
-  if (todo.dueDate) {
-    parts.push(`(Due by: ${todo.dueDate.toISOString().slice(0,10)})`)
-  }
-  const isActionable = !todo.complete && ('children' in todo ? todo.children.length === 0 : true)
-  const styler = isActionable ? chalk.default.white : chalk.default.grey
-  return styler(parts.join(' '))
-
 }
 
 commander.parseArgv(process.argv)
