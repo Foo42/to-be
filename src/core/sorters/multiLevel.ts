@@ -1,14 +1,15 @@
 import { Sorter } from '../tree'
 
-export function multiLevelSorter<T> (sorters: Array<Sorter<T>>): Sorter<T> {
-  return (a: T, b: T): number => {
-    for (let index = 0; index < sorters.length; index++) {
-      const sorter = sorters[index]
-      const sorterResult = sorter(a, b)
-      if (sorterResult !== 0) {
-        return sorterResult
-      }
+export type Sorter<T> = (left: T, right: T) => number
+export function sortBy<RequiredForSortingT> (sorter: Sorter<RequiredForSortingT>) {
+  return {
+    sort<ToSortT extends RequiredForSortingT> (left: ToSortT, right: ToSortT): number {
+      return sorter(left, right)
+    },
+    thenBy<AdditionalSortingRequirementT> (furtherSorter: Sorter<AdditionalSortingRequirementT>) {
+      type CompositSortingRequirmentT = RequiredForSortingT & AdditionalSortingRequirementT
+      const compositSorter = (left: CompositSortingRequirmentT, right: CompositSortingRequirmentT) => sorter(left, right) || furtherSorter(left, right)
+      return sortBy<CompositSortingRequirmentT>(compositSorter)
     }
-    return 0
   }
 }

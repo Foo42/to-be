@@ -191,5 +191,5 @@ describe('todo tree', () => {
 })
 
 function withEmptyChildList (todo: Todo): TreeNode<Todo> {
-  return { ...todo, children: [], summary: undefined }
+  return { ...todo, children: [], summary: {} }
 }

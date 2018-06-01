@@ -3,12 +3,12 @@ import { groupBy, Dictionary, partition, assign, flatMap, sumBy, keyBy } from 'l
 import { Predicate } from '../predicate'
 import { Dict } from '../../cli/parser/configParser'
 
-export type TreeNode<T, SummaryT = undefined> = T & {children: TreeNode<T, SummaryT>[], summary: SummaryT}
-export type TodoTree<SummaryT = undefined> = TreeNode<Todo, SummaryT>
+export type TreeNode<T, SummaryT = {}> = T & {children: TreeNode<T, SummaryT>[], summary: SummaryT}
+export type TodoTree<SummaryT = {}> = TreeNode<Todo, SummaryT>
 
 function prepNode (todo: Todo, childrenByParent: Dictionary<Todo[]>): TodoTree {
   const children = childrenByParent[todo.id] || []
-  return { ...todo, children: children.map(child => prepNode(child, childrenByParent)), summary: undefined }
+  return { ...todo, children: children.map(child => prepNode(child, childrenByParent)), summary: {} }
 }
 
 export function buildTodoTree (todos: Todo[]): TodoTree[] {
@@ -24,7 +24,7 @@ export function deepSort<T> (todos: TodoTree<T>, sorter: Sorter<TodoTree<T>>): T
   return { ...todos, children: sortedChildren }
 }
 
-export function deepSortAll<T> (trees: TodoTree<T>[], sorter: Sorter<TodoTree<T>>): TodoTree<T>[] {
+export function deepSortAll<SummaryT> (trees: TodoTree<SummaryT>[], sorter: Sorter<TodoTree<SummaryT>>): TodoTree<SummaryT>[] {
   return trees.map(tree => deepSort(tree, sorter)).sort(sorter)
 }
 

@@ -729,3 +729,20 @@
     parentTaskId: adf09458-2d27-d6f4-e815-2c4c941c6fbc
     blockingTaskIds: []
   time: 2018-05-17T07:01:19.708Z
+- type: addToList
+  item:
+    id: c834b4e3-84e0-c6ed-5314-d584c1293d3d
+    title: multi-level sorter
+    complete: false
+    createdAt: 2018-06-01T06:27:51.686Z
+    contexts: []
+    tags: []
+    notes: []
+    parentTaskId: 2eb1f4e8-619a-c806-6c6e-11c0264efe9b
+    blockingTaskIds: []
+  time: 2018-06-01T06:27:51.686Z
+- type: updateItem
+  id: c834b4e3-84e0-c6ed-5314-d584c1293d3d
+  update:
+    type: markCompleted
+  time: 2018-06-01T06:28:19.473Z

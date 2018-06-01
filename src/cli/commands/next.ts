@@ -7,8 +7,10 @@ import { isString } from 'util'
 import { buildTodoTree, deepFilterAll, deepSortAll } from '../../core/tree'
 import { summariseActionableTasksWithin } from '../../core/tree/summarisers/actionableWithin'
 import { SummariseDueDates } from '../../core/tree/summarisers/dueDates'
-import { dueSoonest } from '../../core/sorters'
+import { dueSoonest, sortByHighestWeightTagWithin } from '../../core/sorters'
 import { renderTodoTree } from '../renderers'
+import { summariseTagsWithin } from '../../core/tree/summarisers/tagsWithin'
+import { sortBy } from '../../core/sorters/multiLevel'
 
 interface Flags {
   availableTime?: number
@@ -29,26 +31,37 @@ export const showNext = (todoFilePath: string, activeContexts: string[]) => asyn
 
   const allTodos: Todo[] = await loadActionsFromFile(todoFilePath).then(buildStateFromActions)
 
+  const isActionableNow = isActionableNowGiven(allTodos, activeContexts, flags)
+
+  const fullTrees = buildTodoTree(allTodos)
+    .map(tree => summariseActionableTasksWithin(tree, isActionableNow))
+
+  const withoutInactionableBranches = deepFilterAll(fullTrees, (tree) => !tree.complete && tree.summary.actionableWithin > 0)
+
+  const augmentedActionableTrees =
+    withoutInactionableBranches
+      .map(SummariseDueDates)
+      .map(summariseTagsWithin)
+
+  const tagWeights = { 'external-commitment': 3, 'damage-limiting': 2, 'escalating-cost': 2, 'exponential-cost': 2.5, family: 1.5 }
+  const sorter = sortBy(dueSoonest).thenBy(sortByHighestWeightTagWithin(tagWeights))
+  const sorted = deepSortAll(augmentedActionableTrees, sorter.sort)
+
+  return console.log(renderTodoTree(sorted))
+}
+
+function isActionableNowGiven (allTodos: Todo[], activeContexts: string[], flags: Flags) {
   const todoDict = keyBy(allTodos, 'id')
   const isComplete = (id: string) => (todoDict[id] || { complete: true }).complete
-
   const conditions = [
     isIncomplete,
     isLeaf,
     (todo: Todo) => allContextsActive(todo, activeContexts),
     notBlocked(isComplete)
   ]
-
   if (flags.availableTime) {
     conditions.push(noLongerThan(flags.availableTime))
   }
-
   const isActionableNow = intersectionOf(...conditions)
-
-  const fullTrees = buildTodoTree(allTodos)
-    .map(tree => summariseActionableTasksWithin(tree, isActionableNow))
-
-  const filteredTrees = deepFilterAll(fullTrees, (tree) => !tree.complete && tree.summary.actionableWithin > 0)
-  const sorted = deepSortAll(filteredTrees.map(SummariseDueDates), dueSoonest)
-  return console.log(renderTodoTree(sorted))
+  return isActionableNow
 }
