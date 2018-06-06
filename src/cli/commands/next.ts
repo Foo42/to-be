@@ -11,6 +11,8 @@ import { dueSoonest, sortByHighestWeightTagWithin } from '../../core/sorters'
 import { renderTodoTree } from '../renderers'
 import { summariseTagsWithin } from '../../core/tree/summarisers/tagsWithin'
 import { sortBy } from '../../core/sorters/multiLevel'
+import { Config } from '../../core/config/types'
+import { noConflict } from 'bluebird'
 
 interface Flags {
   availableTime?: number
@@ -26,7 +28,8 @@ function parseFlags (flags: Dict<any>): Flags {
   return {}
 }
 
-export const showNext = (todoFilePath: string, activeContexts: string[]) => async (parsed: { flags: Dict<any> }) => {
+export const showNext = (todoFilePath: string, loadConfig: () => Promise<Config>, activeContexts: string[]) => async (parsed: { flags: Dict<any> }) => {
+  const config = await loadConfig()
   const flags = parseFlags(parsed.flags)
 
   const allTodos: Todo[] = await loadActionsFromFile(todoFilePath).then(buildStateFromActions)
@@ -43,7 +46,7 @@ export const showNext = (todoFilePath: string, activeContexts: string[]) => asyn
       .map(SummariseDueDates)
       .map(summariseTagsWithin)
 
-  const tagWeights = { 'external-commitment': 3, 'damage-limiting': 2, 'escalating-cost': 2, 'exponential-cost': 2.5, family: 1.5 }
+  const tagWeights = config.tagWeights
   const sorter = sortBy(dueSoonest).thenBy(sortByHighestWeightTagWithin(tagWeights))
   const sorted = deepSortAll(augmentedActionableTrees, sorter.sort)
 

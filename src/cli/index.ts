@@ -21,9 +21,16 @@ import { SummariseDueDates } from '../core/tree/summarisers/dueDates'
 import { summariseActionableTasksWithin } from '../core/tree/summarisers/actionableWithin'
 import { renderTodoTree, renderTodoList } from './renderers'
 import { showNext } from './commands/next'
+import { loadConfigFromFile } from '../core/config/loader'
+import { getDefaults } from '../core/config/defaults'
 
 const defaultFilePath = path.join(process.cwd(), 'todo.log.yml')
 const todoFilePath = process.env.TODO_FILE || defaultFilePath
+
+const defaultConfigFilePath = path.join(path.dirname(todoFilePath), 'todo.config.yml')
+const configFilePath = process.env.TODO_CONFIG_FILE || defaultConfigFilePath
+const loadConfig = () => loadConfigFromFile(configFilePath).catch(() => getDefaults())
+
 const activeContexts = (process.env.ACTIVE_CONTEXTS ? process.env.ACTIVE_CONTEXTS.split(',') : []).map(context => context.trim().toLowerCase())
 
 const commander = new Commander()
@@ -57,7 +64,7 @@ commander
 commander
   .command('next')
   .option('available-time', true)
-  .action(showNext(todoFilePath, activeContexts))
+  .action(showNext(todoFilePath, loadConfig, activeContexts))
 
 commander
   .command('list [<viewName>]')
@@ -208,7 +215,7 @@ function todoIdPicker (prompt = 'number'): Promise<string> {
     })
     .then(todos => {
       return promptInput(prompt).then(answer => {
-        const address = answer.split('.').map(part => parseInt(part, 10))
+        const address = answer.split(/[\.\s]/).map(part => parseInt(part, 10))
         const siblings = address.slice(0,-1).reduce((list: TreeNode<Todo>[], i: number) => {
           return list[i].children
         }, todos) || todos
