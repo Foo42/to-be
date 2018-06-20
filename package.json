@@ -14,6 +14,7 @@
   "author": "Julian Haeger",
   "license": "MIT",
   "devDependencies": {
+    "@types/blessed": "^0.1.10",
     "@types/bluebird": "^3.5.20",
     "@types/chai": "^4.0.8",
     "@types/chalk": "^2.2.0",
@@ -34,6 +35,7 @@
     "typescript": "^2.6.2"
   },
   "dependencies": {
+    "blessed": "^0.1.81",
     "bluebird": "^3.5.1",
     "chalk": "^2.3.2",
     "commander": "^2.14.1",

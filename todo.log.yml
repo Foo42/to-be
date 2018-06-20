@@ -756,3 +756,22 @@
   update:
     type: markCompleted
   time: 2018-06-06T06:59:14.305Z
+- type: addToList
+  item:
+    id: 9b8600b6-d530-6290-c8ff-4c15a4adc7ed
+    title: >-
+      used a blessed.js screen which filters as you type for better todo picker
+      interface
+    complete: false
+    createdAt: 2018-06-07T06:35:37.650Z
+    contexts: []
+    tags: []
+    notes: []
+    parentTaskId: eabd634b-bf40-b216-a092-1a70cc8fea82
+    blockingTaskIds: []
+  time: 2018-06-07T06:35:37.650Z
+- type: updateItem
+  id: 9b8600b6-d530-6290-c8ff-4c15a4adc7ed
+  update:
+    type: markCompleted
+  time: 2018-06-20T06:50:11.229Z

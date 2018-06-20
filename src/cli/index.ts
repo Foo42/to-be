@@ -23,6 +23,7 @@ import { renderTodoTree, renderTodoList } from './renderers'
 import { showNext } from './commands/next'
 import { loadConfigFromFile } from '../core/config/loader'
 import { getDefaults } from '../core/config/defaults'
+import { interactivePicker } from './todoPicker'
 
 const defaultFilePath = path.join(process.cwd(), 'todo.log.yml')
 const todoFilePath = process.env.TODO_FILE || defaultFilePath
@@ -75,6 +76,21 @@ commander
   })
 
 commander
+  .command('show')
+  .action(() => {
+    let filter = isIncomplete
+    return loadActionsFromFile(todoFilePath)
+      .then(buildStateFromActions)
+      .then(todos => todos.filter(filter))
+      .then(todos => buildTodoTree(todos))
+      // .then(interactiveFilter)
+      // .then((res) => console.log('got it', res) || res)
+      .then(trees => renderTodoTree(trees, true))
+      .then(console.log)
+      .then(() => undefined)
+  })
+
+commander
   .command('done [<id>]')
   .action((options) => {
     const id = options.allSubCommands.id
@@ -85,7 +101,7 @@ commander
       const update = updateItemInList(id, markCompleted())
       return appendActionToFile(update, todoFilePath)
     })
-      .then(() => showTreeFromFile(todoFilePath))
+    .then(() => showTreeFromFile(todoFilePath))
   })
 
 commander
@@ -209,20 +225,21 @@ function todoIdPicker (prompt = 'number'): Promise<string> {
     .then(buildStateFromActions)
     .then(todos => todos.filter(isIncomplete))
     .then(todos => buildTodoTree(todos))
-    .then(todos => {
-      console.log(renderTodoTree(todos, true))
-      return todos
+    .then(interactivePicker)
+    .then(todo => todo.id)
+}
+
+function promptForTodoCardinalPath (prompt: string) {
+  return (todos: TreeNode<Todo>[]) => {
+    return promptInput(prompt).then(answer => {
+      const address = answer.split(/[\.\s]/).map(part => parseInt(part, 10))
+      const siblings = address.slice(0, -1).reduce((list: TreeNode<Todo>[], i: number) => {
+        return list[i].children
+      }, todos) || todos
+      const todo = siblings[address[address.length - 1]]
+      return Promise.resolve(todo.id)
     })
-    .then(todos => {
-      return promptInput(prompt).then(answer => {
-        const address = answer.split(/[\.\s]/).map(part => parseInt(part, 10))
-        const siblings = address.slice(0,-1).reduce((list: TreeNode<Todo>[], i: number) => {
-          return list[i].children
-        }, todos) || todos
-        const todo = siblings[address[address.length - 1]]
-        return Promise.resolve(todo.id)
-      })
-    })
+  }
 }
 
 function showListFromFile (todoFilePath: string, filter = isIncomplete) {
