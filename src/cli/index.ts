@@ -113,8 +113,11 @@ commander
     const { id, context } = options.allSubCommands
     console.log(`in add-context. context: ${context}, id: ${id}`)
     const gettingId = id ? Promise.resolve(id) : todoIdPicker()
-    const gettingContext = gettingId.then(() => promptInput('Context to add'))
+    const gettingContext = context ? Promise.resolve(context) : gettingId.then(() => promptInput('Context to add'))
     return Promise.all([gettingId, gettingContext]).then(([id, context]) => {
+      if (context.startsWith('@')) {
+        context = context.substring(1)
+      }
       const update = updateItemInList(id, addContexts([context]))
       return appendActionToFile(update, todoFilePath)
     })
@@ -127,6 +130,9 @@ commander
     const gettingId = id ? Promise.resolve(id) : todoIdPicker()
     const gettingTag = tagName ? Promise.resolve(tagName) : gettingId.then(() => promptInput('Tag to add'))
     return Promise.all([gettingId, gettingTag]).then(([id, tagName]) => {
+      if(tagName.startsWith('#')){
+        tagName = tagName.substring(1)
+      }
       const update = updateItemInList(id, addTags([{ name: tagName }]))
       return appendActionToFile(update, todoFilePath)
     })
