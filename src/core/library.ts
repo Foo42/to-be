@@ -5,4 +5,3 @@ export { allowAnyTodo, isIncomplete } from './filters'
 export { TreeNode, buildTodoTree } from './tree'
 export { loadConfigFromFile } from './config/loader'
 export { getDefaults } from './config/defaults'
-
