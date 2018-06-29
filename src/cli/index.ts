@@ -130,7 +130,7 @@ commander
     const gettingId = id ? Promise.resolve(id) : todoIdPicker()
     const gettingTag = tagName ? Promise.resolve(tagName) : gettingId.then(() => promptInput('Tag to add'))
     return Promise.all([gettingId, gettingTag]).then(([id, tagName]) => {
-      if(tagName.startsWith('#')){
+      if (tagName.startsWith('#')) {
         tagName = tagName.substring(1)
       }
       const update = updateItemInList(id, addTags([{ name: tagName }]))
