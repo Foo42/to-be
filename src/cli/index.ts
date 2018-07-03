@@ -12,9 +12,9 @@ import { TreeNode, buildTodoTree } from '../core/tree'
 import { quickAddParse } from './quickAdd'
 import { renderTodoTree, renderTodoList } from './renderers'
 import { showNext } from './commands/next'
-import { loadConfigFromFile } from '../core/config/loader'
-import { getDefaults } from '../core/config/defaults'
+import { getDefaults } from './config/defaults'
 import { interactivePicker } from './todoPicker'
+import { loadConfigFromFile } from './config/loader'
 
 const defaultFilePath = path.join(process.cwd(), 'todo.log.yml')
 const todoFilePath = process.env.TODO_FILE || defaultFilePath

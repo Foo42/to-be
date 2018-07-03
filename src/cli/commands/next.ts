@@ -11,7 +11,7 @@ import { dueSoonest, sortByHighestWeightTagWithin } from '../../core/sorters'
 import { renderTodoTree } from '../renderers'
 import { summariseTagsWithin } from '../../core/tree/summarisers/tagsWithin'
 import { sortBy } from '../../core/sorters/multiLevel'
-import { Config } from '../../core/config/types'
+import { Config } from '../config/types'
 import { noConflict } from 'bluebird'
 
 interface Flags {
