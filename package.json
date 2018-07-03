@@ -1,6 +1,6 @@
 {
   "name": "todo-to-be-core",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "todo manager core library",
   "main": "build/src/core/library.js",
   "types": "build/src/core/library.d.ts",
