@@ -25,9 +25,6 @@ export function deserialiseListAction (raw: Dict<any>): ListAction {
   if (!isString(type)) {
     throw new Error('malformed list action. Missing or mistyped field "type"')
   }
-  if (! isDict(rawTime)) {
-    throw new Error('malformed list action. Missing or mistyped field "time"')
-  }
   const time = ensureDate(rawTime)
   switch (type) {
     case 'addToList': {
