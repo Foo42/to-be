@@ -1,5 +1,5 @@
 import { Todo, parseNote, Note } from './todo'
-import { Dict, isDict } from '../util/deserialising'
+import { Dict, isDict, ensureDate } from '../util/deserialising'
 import { isString, isArray, isNumber, isDate } from 'util'
 
 export type ChangeTitle = {
@@ -130,18 +130,8 @@ export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
     }
 
     case 'setDueDate': {
-      const rawDueDate = raw.dueDate
-      if (isDate(rawDueDate)) {
-        return setDueDate(rawDueDate)
-      }
-      if (isString(rawDueDate)) {
-        const dueDate = new Date(rawDueDate)
-        if (!isNaN(dueDate.getTime())) {
-          return setDueDate(dueDate)
-        }
-        throw new Error('Malformed setDueDate update. Bad date string in field "dueDate"')
-      }
-      throw new Error('Malformed setDueDate update. Missing or mis-typed field "dueDate".' + typeof(rawDueDate))
+      const dueDate = ensureDate(raw.dueDate)
+      return setDueDate(dueDate)
     }
 
     case 'addNote': {
