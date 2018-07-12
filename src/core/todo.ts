@@ -1,6 +1,6 @@
 import * as Guid from 'guid'
 import { isString, isBoolean, isDate, isUndefined, isArray, isNumber } from 'util'
-import { Dict, isDict } from '../util/deserialising'
+import { Dict, isDict, ensureDate } from '../util/deserialising'
 
 export interface Tag {
   name: string
@@ -89,7 +89,7 @@ function parseDate (rawDate: string): Date {
 }
 
 export function deserialiseTodo (raw: Dict<any>): Todo {
-  const { id, title, complete, createdAt, contexts, estimateMinutes, parentTaskId, tags, dueDate, notes = [], blockingTasks = [] } = raw
+  const { id, title, complete, createdAt, contexts, estimateMinutes, parentTaskId, tags, dueDate: rawDueDate, notes = [], blockingTasks = [] } = raw
   if (!isString(id)) {
     throw new Error('missing or malformed id')
   }
@@ -108,9 +108,7 @@ export function deserialiseTodo (raw: Dict<any>): Todo {
   if (!isUndefined(parentTaskId) && !isString(parentTaskId)) {
     throw new Error('mis-typed field "parentTaskId". Should be string.')
   }
-  if (!isUndefined(dueDate) && !isDate(dueDate)) {
-    throw new Error('mis-typed field "dueDate". Should be Date.')
-  }
+  const dueDate = isUndefined(rawDueDate) ? undefined : ensureDate(rawDueDate)
   if (!isArray(notes)) {
     throw new Error('mis-typed field "notes". Should be array.')
   }
@@ -129,7 +127,7 @@ export function deserialiseTodo (raw: Dict<any>): Todo {
     notes: parseArray(notes, parseNote),
     estimateMinutes,
     parentTaskId,
-    dueDate: dueDate,
+    dueDate,
     blockingTaskIds: parseArray(blockingTasks, parseAsString)
   }
 }
