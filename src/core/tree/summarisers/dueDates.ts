@@ -5,9 +5,9 @@ export interface DueDateSummary {
   dueDates: Date[]
 }
 
-export function SummariseDueDates<PrevSummaryT> (todos: TodoTree<PrevSummaryT>): TodoTree<PrevSummaryT & DueDateSummary> {
+export function summariseDueDates<PrevSummaryT> (todos: TodoTree<PrevSummaryT>): TodoTree<PrevSummaryT & DueDateSummary> {
   const childrenWithSummaries = todos.children
-      .map(SummariseDueDates)
+      .map(summariseDueDates)
 
   const combinedDueDates = flatMap(childrenWithSummaries, child => child.summary.dueDates)
 

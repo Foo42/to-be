@@ -6,7 +6,7 @@ import { isIncomplete, isLeaf, allContextsActive, notBlocked, noLongerThan, inte
 import { isString } from 'util'
 import { buildTodoTree, deepFilterAll, deepSortAll } from '../../core/tree'
 import { summariseActionableTasksWithin } from '../../core/tree/summarisers/actionableWithin'
-import { SummariseDueDates } from '../../core/tree/summarisers/dueDates'
+import { summariseDueDates } from '../../core/tree/summarisers/dueDates'
 import { dueSoonest, sortByHighestWeightTagWithin } from '../../core/sorters'
 import { renderTodoTree } from '../renderers'
 import { summariseTagsWithin } from '../../core/tree/summarisers/tagsWithin'
@@ -43,7 +43,7 @@ export const showNext = (todoFilePath: string, loadConfig: () => Promise<Config>
 
   const augmentedActionableTrees =
     withoutInactionableBranches
-      .map(SummariseDueDates)
+      .map(summariseDueDates)
       .map(summariseTagsWithin)
 
   const tagWeights = config.tagWeights

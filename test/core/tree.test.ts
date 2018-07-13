@@ -2,7 +2,7 @@ import { Todo, todo } from '../../src/core/todo'
 import { buildTodoTree, TreeNode, deepFilter } from '../../src/core/tree'
 import { expect } from 'chai'
 import { keyBy } from 'lodash'
-import { SummariseDueDates } from '../../src/core/tree/summarisers/dueDates'
+import { summariseDueDates } from '../../src/core/tree/summarisers/dueDates'
 import { summariseActionableTasksWithin } from '../../src/core/tree/summarisers/actionableWithin'
 import { summariseTagsWithin } from '../../src/core/tree/summarisers/tagsWithin'
 
@@ -60,7 +60,7 @@ describe('todo tree', () => {
       it('should return an empty list for a tree with no children and no due date', () => {
         const todo: Todo = baseTodo('a', 'a')
         const tree = buildTodoTree([todo])[0]
-        const summarisedTree = SummariseDueDates(tree)
+        const summarisedTree = summariseDueDates(tree)
         expect(summarisedTree.summary.dueDates).to.deep.eq([])
       })
 
@@ -68,7 +68,7 @@ describe('todo tree', () => {
         const dueDate = new Date('2050-01-15')
         const todo: Todo = { ...baseTodo('a', 'a'), dueDate }
         const tree = buildTodoTree([todo])[0]
-        const summarisedTree = SummariseDueDates(tree)
+        const summarisedTree = summariseDueDates(tree)
         expect(summarisedTree.summary.dueDates).to.deep.eq([dueDate])
       })
 
@@ -81,7 +81,7 @@ describe('todo tree', () => {
           { ...baseTodo('d', 'child without due date'), parentTaskId: 'a' }
         ]
         const tree = buildTodoTree(todos)[0]
-        const summarisedTree = SummariseDueDates(tree)
+        const summarisedTree = summariseDueDates(tree)
         expect(summarisedTree.summary.dueDates).to.deep.eq([new Date('2060-02-16'), new Date('2070-03-17'), new Date('2050-01-15')])
       })
 
@@ -95,7 +95,7 @@ describe('todo tree', () => {
           { ...baseTodo('e', 'I am a great grandchild'), parentTaskId: 'c', dueDate: new Date('2090-05-19') }
         ]
         const tree = buildTodoTree(todos)[0]
-        const summarisedTree = SummariseDueDates(tree)
+        const summarisedTree = summariseDueDates(tree)
         const actualDateSet = new Set(summarisedTree.summary.dueDates)
         const expectedDateSet = new Set([new Date('2050-01-15'), new Date('2060-02-16'), new Date('2070-03-17'), new Date('2080-04-18'), new Date('2090-05-19')])
         expect(actualDateSet).to.deep.equal(expectedDateSet)
