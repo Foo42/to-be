@@ -1,7 +1,7 @@
 export { Todo } from './todo'
 export { addToList, AddToList, updateItemInList, UpdateItemInList, ListAction, deserialiseListAction } from './listActions'
 export { TodoUpdate, markCompleted, MarkCompleted, addContexts, AddContexts, changeTitle, ChangeTitle, setEstimate, SetEstimate, setParentTask, SetParentTask, addTags, AddTags, setDueDate, SetDueDate, addNote, AddNote, addBlockingTask, AddBlockingTask, deserialiseTodoUpdate } from './actions'
-export { allowAnyTodo, isIncomplete } from './filters'
+export { allowAnyTodo, isIncomplete, allContextsActive, noLongerThan, FilterFunc, IsTaskCompleteFunc, intersectionOf, isLeaf } from './filters'
 export { TreeNode, buildTodoTree } from './tree'
 export { ClockedLog, ClockedValue, ConflictResolutionFunc, dropConflicts, mergeLogs } from './replication/clockedLog'
 export { Clock, compareClocks, currentTime, mergeClocks, incrementKey, ClockComparisonResult } from './replication/vectorClock'
