@@ -1,4 +1,4 @@
-import { Dict } from '../../../cli/parser/configParser'
+import { Dict } from '../../dict'
 import { Tag } from '../../todo'
 import { TodoTree } from '..'
 import { keyBy } from 'lodash'

@@ -1,7 +1,6 @@
 import { Todo, Tag } from '../todo'
 import { groupBy, Dictionary, partition, assign, flatMap, sumBy, keyBy } from 'lodash'
 import { Predicate } from '../predicate'
-import { Dict } from '../../cli/parser/configParser'
 
 export type TreeNode<T, SummaryT = {}> = T & {children: TreeNode<T, SummaryT>[], summary: SummaryT}
 export type TodoTree<SummaryT = {}> = TreeNode<Todo, SummaryT>
