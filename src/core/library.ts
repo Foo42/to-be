@@ -10,3 +10,4 @@ export { applyUpdate } from './evolveItem'
 export { ActionableWithinSummary, summariseActionableTasksWithin } from './tree/summarisers/actionableWithin'
 export { DueDateSummary, summariseDueDates} from './tree/summarisers/dueDates'
 export { TagsWithinSummary, summariseTagsWithin }from './tree/summarisers/tagsWithin'
+export { sortBy } from './sorters/multiLevel';
