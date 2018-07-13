@@ -11,3 +11,4 @@ export { ActionableWithinSummary, summariseActionableTasksWithin } from './tree/
 export { DueDateSummary, summariseDueDates} from './tree/summarisers/dueDates'
 export { TagsWithinSummary, summariseTagsWithin }from './tree/summarisers/tagsWithin'
 export { sortBy } from './sorters/multiLevel';
+export {dueSoonest, WithSummarisedDueDates, WithSummarisedTagsWithin, sortByHighestWeightTagWithin} from './sorters'
