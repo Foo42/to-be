@@ -1,7 +1,7 @@
 import { last, max } from 'lodash'
 import { DueDateSummary } from '../tree/summarisers/dueDates'
 import { TagsWithinSummary } from '../tree/summarisers/tagsWithin'
-import { Dict } from '../../cli/parser/configParser'
+import { Dict } from '../dict'
 
 export type WithSummarisedDueDates = { summary: DueDateSummary }
 

@@ -8,7 +8,7 @@ export { Clock, compareClocks, currentTime, mergeClocks, incrementKey, ClockComp
 export { applyListAction } from './evolveList'
 export { applyUpdate } from './evolveItem'
 export { ActionableWithinSummary, summariseActionableTasksWithin } from './tree/summarisers/actionableWithin'
-export { DueDateSummary, summariseDueDates} from './tree/summarisers/dueDates'
+export { DueDateSummary, summariseDueDates } from './tree/summarisers/dueDates'
 export { TagsWithinSummary, summariseTagsWithin }from './tree/summarisers/tagsWithin'
-export { sortBy } from './sorters/multiLevel';
-export {dueSoonest, WithSummarisedDueDates, WithSummarisedTagsWithin, sortByHighestWeightTagWithin} from './sorters'
+export { sortBy } from './sorters/multiLevel'
+export { dueSoonest, WithSummarisedDueDates, WithSummarisedTagsWithin, sortByHighestWeightTagWithin } from './sorters'
