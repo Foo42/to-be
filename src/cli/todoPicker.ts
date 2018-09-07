@@ -1,3 +1,4 @@
+import chalk from 'chalk'
 import { TodoTree, deepFilterAll, TreeNode } from '../core/tree'
 import { renderTodoTree } from './renderers'
 import { Predicate } from '../core/predicate'
@@ -57,9 +58,11 @@ export function interactivePicker(trees: TodoTree[]): Promise<TodoTree> {
         filterString = (filterString || '') + key
       }
 
-      filter = new RegExp(filterString || '.*')
+      filter = new RegExp(filterString || '.*', 'i')
       filteredTrees = applyFilter(filter, trees)
-      const prompt = 'filter: ' + filterString
+      const isUniqueMatch = flatMap(filteredTrees, toLeafList).length === 1
+      const promptStyle = isUniqueMatch ? chalk.greenBright : chalk.white
+      const prompt = 'filter: ' + promptStyle(filterString)
       drawTreesWithPrompt(filteredTrees, prompt)
       return
     }
