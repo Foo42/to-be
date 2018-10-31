@@ -1,7 +1,8 @@
 import { Config } from './types'
 
 const defaults: Config = {
-  tagWeights: {}
+  tagWeights: {},
+  contextWeights: {}
 }
 
 export const getDefaults = () => defaults

@@ -8,6 +8,8 @@ To list management customised to how *I* want to work to help be *do* what I nee
 * Offline & online. I need to be able to work offline but have things synced and accessible online
 * Extensible. I want todos to be accessible to additional services I might chose to create such that I can access and process them in novel ways.
 
+
+
 ### Things to Capture
 * title
 * notes

@@ -2,6 +2,7 @@ import { dueSoonest, sortByHighestWeightTagWithin } from '../../src/core/sorters
 import { expect } from 'chai'
 import { Sorter } from '../../src/core/tree'
 import { sortBy } from '../../src/core/sorters/multiLevel'
+import { scoredSorterDesc } from '../../src/core/sorters/scored'
 
 describe('sorters', () => {
   describe('dueSoonest', () => {
@@ -46,6 +47,15 @@ describe('sorters', () => {
       const withMedium = { summary: { tagsWithin: { 'medium': { name: 'medium' } } } }
       const sorted = [withMedium, withHigh].sort(sortByHighestWeightTagWithin(tagWeights))
       expect(sorted).to.deep.eq([withHigh, withMedium])
+    })
+  })
+
+  describe('scoreSorter', () => {
+    it('should sort (Descending) accoring to score function', () => {
+      const input = [{ score: 2 }, { score: 0 },{ score: 4.3 }, { score: 1 }]
+      const scoreFunction = (input: {score: number}) => input.score
+      const sorted = input.sort(scoredSorterDesc(scoreFunction))
+      expect(sorted).to.deep.equal([{ score: 4.3 }, { score: 2 },{ score: 1 }, { score: 0 }])
     })
   })
 })

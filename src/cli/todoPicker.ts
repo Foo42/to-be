@@ -4,9 +4,10 @@ import { renderTodoTree } from './renderers'
 import { Predicate } from '../core/predicate'
 import { isUndefined } from 'util'
 import { flatMap } from 'lodash'
-import { clearScreen } from 'ansi-escapes';
+import { clearScreen } from 'ansi-escapes'
+import { dump } from 'wtfnode'
 
-function applyFilter(filter: RegExp | undefined, trees: TodoTree[]): TodoTree[] {
+function applyFilter (filter: RegExp | undefined, trees: TodoTree[]): TodoTree[] {
   if (isUndefined(filter)) {
     return trees
   }
@@ -19,8 +20,14 @@ function applyFilter(filter: RegExp | undefined, trees: TodoTree[]): TodoTree[] 
   return deepFilterAll(trees, predicate)
 }
 
-export function interactivePicker(trees: TodoTree[]): Promise<TodoTree> {
+export function interactivePicker (trees: TodoTree[]): Promise<TodoTree> {
+
+  console.log('start of todo picker')
+  dump()
   return new Promise((resolve) => {
+
+    console.log('pre raw')
+    dump()
     process.stdin.setRawMode!(true)
     process.stdin.setEncoding('utf8')
 
@@ -41,7 +48,7 @@ export function interactivePicker(trees: TodoTree[]): Promise<TodoTree> {
 
     const processKey = (key: string) => {
       if (key === '\u0003') {
-        process.exit();
+        process.exit()
       }
 
       if (key.charCodeAt(0) === 13) {
@@ -52,7 +59,7 @@ export function interactivePicker(trees: TodoTree[]): Promise<TodoTree> {
         return
       }
 
-      if(key.charCodeAt(0) === 127){
+      if (key.charCodeAt(0) === 127) {
         filterString = filterString.slice(0,-1)
       } else {
         filterString = (filterString || '') + key
@@ -66,22 +73,27 @@ export function interactivePicker(trees: TodoTree[]): Promise<TodoTree> {
       drawTreesWithPrompt(filteredTrees, prompt)
       return
     }
+
+    console.log('pre event hookup')
+    dump()
     process.stdin.on('data', processKey)
+    console.log('post event hookup')
+    dump()
 
     const prompt = 'filter: ' + filterString
     drawTreesWithPrompt(filteredTrees, prompt)
   })
 }
 
-function getFinalResult(filteredTrees: TodoTree[]) {
-  const leaves = flatMap(filteredTrees, toLeafList);
+function getFinalResult (filteredTrees: TodoTree[]) {
+  const leaves = flatMap(filteredTrees, toLeafList)
   if (leaves.length !== 1) {
-    throw new Error('ambiguous selection');
+    throw new Error('ambiguous selection')
   }
-  return leaves[0];
+  return leaves[0]
 }
 
-function toLeafList<T>(tree: TreeNode<T>): TreeNode<T>[] {
+function toLeafList<T> (tree: TreeNode<T>): TreeNode<T>[] {
   if (tree.children.length === 0) {
     return [tree]
   }
