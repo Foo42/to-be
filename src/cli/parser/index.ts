@@ -32,7 +32,16 @@ export class Commander {
     const parsed = parseInput(input, matching)
     const actionResult = matching.action(parsed)
     if (actionResult) {
-      actionResult.then(() => undefined, (error: Error) => console.error(error))
+      actionResult.then(
+        () => {
+          process.exit(0)
+        },
+        (error: Error) => {
+          console.error(error)
+          process.exit(1)
+        }
+      )
+
     }
   }
 }

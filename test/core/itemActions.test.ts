@@ -1,5 +1,5 @@
-import { changeTitle, markCompleted, TodoUpdate, addContexts, setEstimate, setParentTask, addTags, setDueDate, addNote, addBlockingTask } from '../../src/core/actions'
-import { assert } from 'chai'
+import { changeTitle, markCompleted, TodoUpdate, addContexts, setEstimate, setParentTask, addTags, setDueDate, addNote, addBlockingTask, markDeleted } from '../../src/core/actions'
+import { assert, expect } from 'chai'
 import { applyListAction } from '../../src/core/evolveList'
 import { todo, Note } from '../../src/core/todo'
 import { applyUpdate } from '../../src/core/evolveItem'
@@ -99,4 +99,18 @@ describe('item actions.', () => {
     })
   })
 
+  describe('markDeleted', () => {
+    it('should set "deleted" to truthy value', () => {
+      const original = todo('123', 'do stuff')
+      const updated = applyUpdate(original, markDeleted())
+      expect(updated.deleted).to.deep.equal({})
+    })
+
+    it('should set deleted.reason if provided', () => {
+      const deleteReason = 'some reason'
+      const original = todo('123', 'do stuff')
+      const updated = applyUpdate(original, markDeleted(deleteReason))
+      expect(updated.deleted).to.deep.equal({ reason: deleteReason })
+    })
+  })
 })

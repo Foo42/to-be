@@ -7,6 +7,10 @@ export function isIncomplete (todo: Todo): boolean {
   return !todo.complete
 }
 
+export function isNotDeleted (todo: Todo): boolean {
+  return !todo.deleted
+}
+
 export function allowAnyTodo (todo: Todo): true {
   return true
 }

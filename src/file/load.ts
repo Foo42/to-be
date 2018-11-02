@@ -5,9 +5,10 @@ import { readFile } from 'fs-extra'
 import { safeLoad } from 'js-yaml'
 import { isArray } from 'util'
 import * as bluebird from 'bluebird'
+import { isNotDeleted } from '../core/filters'
 
 export function buildStateFromActions (actions: ListAction[]): Todo[] {
-  return actions.reduce(applyListAction, [])
+  return actions.reduce(applyListAction, []).filter(isNotDeleted)
 }
 
 export function loadActionsFromYamlString (yaml: string): ListAction[] {

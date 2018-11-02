@@ -13,6 +13,12 @@ export type MarkCompleted = {
 }
 export const markCompleted = (): MarkCompleted => ({ type: 'markCompleted' })
 
+export type MarkDeleted = {
+  type: 'markDeleted'
+  reason?: string
+}
+export const markDeleted = (reason?: string): MarkDeleted => ({ type: 'markDeleted', reason })
+
 export type AddContexts = {
   type: 'addContexts'
   additionalContexts: string[]
@@ -76,6 +82,16 @@ export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
       return {
         type
       }
+    }
+
+    case 'markDeleted': {
+      const update = {
+        type
+      }
+      if (isString(raw.reason)) {
+        return { ...update, reason: raw.reason }
+      }
+      return update
     }
 
     case 'addContexts': {
@@ -155,4 +171,4 @@ export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
   }
 }
 
-export type TodoUpdate = ChangeTitle | MarkCompleted | AddContexts | SetEstimate | SetParentTask | AddTags | SetDueDate | AddNote | AddBlockingTask
+export type TodoUpdate = ChangeTitle | MarkCompleted | AddContexts | SetEstimate | SetParentTask | AddTags | SetDueDate | AddNote | AddBlockingTask | MarkDeleted

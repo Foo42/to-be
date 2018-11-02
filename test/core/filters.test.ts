@@ -1,7 +1,9 @@
 import { Todo, todo } from '../../src/core/todo'
 import { expect } from 'chai'
-import { allContextsActive, noLongerThan, notBlocked, isLeaf } from '../../src/core/filters'
+import { allContextsActive, noLongerThan, notBlocked, isLeaf, isNotDeleted } from '../../src/core/filters'
 import { buildTodoTree, TodoTree } from '../../src/core/tree'
+import { markDeleted } from '../../src/core/actions'
+import { applyUpdate } from '../../src/core/library'
 
 const baseTodo = todo
 
@@ -95,6 +97,19 @@ describe('filters.', () => {
       const child = { ...baseTodo('child', 'I am a child'), parentTaskId: parent.id }
       const tree: TodoTree = buildTodoTree([parent, child])[0]
       expect(isLeaf(tree)).to.eql(false)
+    })
+  })
+
+  describe('isNotDeleted', () => {
+    it('returns true for todos without "deleted" set', () => {
+      const todo = baseTodo('123', 'do stuff')
+      expect(isNotDeleted(todo)).to.equal(true)
+    })
+
+    it('returns false after a todo is deleted', () => {
+      const todo = baseTodo('123', 'do stuff')
+      const deleted = applyUpdate(todo, markDeleted())
+      expect(isNotDeleted(deleted)).to.equal(false)
     })
   })
 })

@@ -30,6 +30,12 @@ export function applyUpdate (original: Todo, action: TodoUpdate): Todo {
     case 'addBlockingTask':
       return { ...original, blockingTaskIds: [...original.blockingTaskIds, action.taskId] }
 
+    case 'markDeleted':
+      if (action.reason) {
+        return { ...original, deleted: { reason: action.reason } }
+      }
+      return { ...original, deleted: {} }
+
     default:
       const x: never = action
       throw new Error('unsupported updated type')

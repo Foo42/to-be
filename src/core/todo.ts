@@ -17,6 +17,7 @@ export interface Todo {
   parentTaskId?: string
   dueDate?: Date
   blockingTaskIds: string[]
+  deleted?: {reason?: string}
 }
 
 function parseContexts (rawContexts: any): string[] {

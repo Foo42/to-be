@@ -7,7 +7,7 @@ import { Todo } from '../core/todo'
 import { appendActionToFile } from '../file/save'
 import { loadActionsFromFile, buildStateFromActions } from '../file/load'
 import * as path from 'path'
-import { markCompleted, addContexts, changeTitle, setEstimate, setParentTask, addTags, setDueDate, addNote, addBlockingTask } from '../core/actions'
+import { markCompleted, addContexts, changeTitle, setEstimate, setParentTask, addTags, setDueDate, addNote, addBlockingTask, markDeleted } from '../core/actions'
 import { allowAnyTodo, isIncomplete } from '../core/filters/index'
 import * as readline from 'readline'
 import { TreeNode, buildTodoTree } from '../core/tree'
@@ -108,6 +108,22 @@ commander
     return gettingId.then(id => {
       console.log(`${id} marked as done`)
       const update = updateItemInList(id, markCompleted())
+      return appendActionToFile(update, todoFilePath)
+    })
+    .then(() => showTreeFromFile(todoFilePath))
+  })
+
+commander
+  .command('delete [<id>]')
+  .option('reason', true)
+  .action((options) => {
+    const id = options.allSubCommands.id
+    console.log('id', id, typeof (id))
+    const gettingId = id ? Promise.resolve(id) : todoIdPicker()
+    return gettingId.then(id => {
+      console.log(`${id} marked as deleted`)
+      const reason = options.flags.reason
+      const update = updateItemInList(id, markDeleted(reason))
       return appendActionToFile(update, todoFilePath)
     })
     .then(() => showTreeFromFile(todoFilePath))
