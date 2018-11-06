@@ -11,5 +11,7 @@ export function saveActionsToFile (actions: ListAction[], filePath: string): Pro
 }
 
 export function appendActionToFile (action: ListAction, filePath: string): Promise<void> {
-  return appendFile(filePath, saveActionsToYamlString([action]), { encoding: 'utf8' })
+  const text = saveActionsToYamlString([action])
+  console.log('appending to', filePath, text)
+  return appendFile(filePath, text, { encoding: 'utf8' })
 }

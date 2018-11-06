@@ -39,7 +39,7 @@ commander
       toAdd.parentTaskId = parent
     }
     const update = addToList(toAdd)
-    appendActionToFile(update, todoFilePath)
+    return appendActionToFile(update, todoFilePath)
       .then(() => showTreeFromFile(todoFilePath))
       .catch(console.error)
   })
