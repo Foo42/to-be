@@ -2,7 +2,7 @@ require('wtfnode')
 import { dump } from 'wtfnode'
 require('source-map-support/register')
 import { Commander } from './parser'
-import { addToList, updateItemInList } from '../core/listActions'
+import { updateItemInList } from '../core/listActions'
 import { Todo } from '../core/todo'
 import { appendActionToFile } from '../file/save'
 import { loadActionsFromFile, buildStateFromActions } from '../file/load'
@@ -11,15 +11,16 @@ import { markCompleted, addContexts, changeTitle, setEstimate, setParentTask, ad
 import { allowAnyTodo, isIncomplete } from '../core/filters/index'
 import * as readline from 'readline'
 import { TreeNode, buildTodoTree } from '../core/tree'
-import { quickAddParse } from './quickAdd'
 import { renderTodoTree, renderTodoList } from './renderers'
 import { showNext } from './commands/next'
 import { getDefaults } from './config/defaults'
 import { interactivePicker } from './todoPicker'
 import { loadConfigFromFile } from './config/loader'
+import { ActionFunction } from './parser/configParser'
+import { createCommand } from './commands/create'
 
 const defaultFilePath = path.join(process.cwd(), 'todo.log.yml')
-const todoFilePath = process.env.TODO_FILE || defaultFilePath
+export const todoFilePath = process.env.TODO_FILE || defaultFilePath
 
 const defaultConfigFilePath = path.join(path.dirname(todoFilePath), 'todo.config.yml')
 const configFilePath = process.env.TODO_CONFIG_FILE || defaultConfigFilePath
@@ -32,17 +33,7 @@ const commander = new Commander()
 commander
   .command('create <title>')
   .option('sub-task')
-  .action(async (options) => {
-    const parent = await (options.flags['sub-task'] ? todoIdPicker('parent todo') : Promise.resolve(''))
-    const toAdd = quickAddParse(options.allSubCommands.title as string)
-    if (parent) {
-      toAdd.parentTaskId = parent
-    }
-    const update = addToList(toAdd)
-    return appendActionToFile(update, todoFilePath)
-      .then(() => showTreeFromFile(todoFilePath))
-      .catch(console.error)
-  })
+  .action(createCommand)
 
 commander
   .command('tree')
@@ -251,7 +242,7 @@ function promptInput (question: string): Promise<string> {
   })
 }
 
-function todoIdPicker (prompt = 'number'): Promise<string> {
+export function todoIdPicker (prompt = 'number'): Promise<string> {
   return loadActionsFromFile(todoFilePath)
     .then(buildStateFromActions)
     .then(todos => todos.filter(isIncomplete))
@@ -282,7 +273,7 @@ function showListFromFile (todoFilePath: string, filter = isIncomplete) {
     .catch(console.error)
 }
 
-function showTreeFromFile (todoFilePath: string, filter = isIncomplete) {
+export function showTreeFromFile (todoFilePath: string, filter = isIncomplete) {
   return loadActionsFromFile(todoFilePath)
     .then(buildStateFromActions)
     .then(todos => todos.filter(filter))
