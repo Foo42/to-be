@@ -775,3 +775,30 @@
   update:
     type: markCompleted
   time: 2018-06-20T06:50:11.229Z
+- type: updateItem
+  id: e23fa1e0-fabc-af8c-18a4-abccc6cf279c
+  update:
+    type: markCompleted
+  time: 2019-01-17T07:58:38.494Z
+- type: addToList
+  item:
+    id: fc6b3fe2-db10-511b-9365-b265184ec4c8
+    title: weekly view
+    complete: false
+    createdAt: 2019-01-25T07:45:59.753Z
+    contexts: []
+    tags: []
+    notes: []
+    blockingTaskIds: []
+  time: 2019-01-25T07:45:59.753Z
+- type: addToList
+  item:
+    id: 2ab044eb-6d30-ebea-5fa0-b8888aa7421c
+    title: filter by task
+    complete: false
+    createdAt: 2019-01-25T07:46:27.691Z
+    contexts: []
+    tags: []
+    notes: []
+    blockingTaskIds: []
+  time: 2019-01-25T07:46:27.691Z

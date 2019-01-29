@@ -1,9 +1,12 @@
-import { Todo, todo } from '../../src/core/todo'
+import { Todo, todo, Tag } from '../../src/core/todo'
 import { expect } from 'chai'
-import { allContextsActive, noLongerThan, notBlocked, isLeaf, isNotDeleted } from '../../src/core/filters'
+import { allContextsActive, noLongerThan, notBlocked, isLeaf, isNotDeleted, FilterFunc } from '../../src/core/filters'
 import { buildTodoTree, TodoTree } from '../../src/core/tree'
-import { markDeleted } from '../../src/core/actions'
+import { markDeleted, addTags } from '../../src/core/actions'
 import { applyUpdate } from '../../src/core/library'
+import { hasTag } from '../../src/core/filters/hasTag'
+import { times } from 'lodash'
+import { intersectionOf } from '../../src/core/filters/intersection'
 
 const baseTodo = todo
 
@@ -110,6 +113,34 @@ describe('filters.', () => {
       const todo = baseTodo('123', 'do stuff')
       const deleted = applyUpdate(todo, markDeleted())
       expect(isNotDeleted(deleted)).to.equal(false)
+    })
+  })
+
+  describe('hasTag', () => {
+    it('returns false for todos without required tag', () => {
+      const todo = baseTodo('123', 'without tag')
+      const tag: Tag = { name: 'some tag' }
+      expect(hasTag(tag)(todo)).to.equal(false)
+    })
+
+    it('returns true for todos with required tag', () => {
+      const withTag = applyUpdate(baseTodo('123', 'with tag'), addTags([{ name: 'some tag' }]))
+      const tag: Tag = { name: 'some tag' }
+      expect(hasTag(tag)(withTag)).to.equal(true)
+    })
+  })
+
+  describe('intersectionOf', () => {
+    it('returns true if all sub-filers return true', () => {
+      const subFilters: FilterFunc[] = times(5, () => () => true)
+      const someTodo = baseTodo('123', 'whatever')
+      expect(intersectionOf(...subFilters)(someTodo)).to.equal(true)
+    })
+
+    it('returns false if any of the sub-filers return false', () => {
+      const subFilters: FilterFunc[] = [...times(4, () => () => true), () => false]
+      const someTodo = baseTodo('123', 'whatever')
+      expect(intersectionOf(...subFilters)(someTodo)).to.equal(false)
     })
   })
 })

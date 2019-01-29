@@ -16,8 +16,10 @@ import { showNext } from './commands/next'
 import { getDefaults } from './config/defaults'
 import { interactivePicker } from './todoPicker'
 import { loadConfigFromFile } from './config/loader'
-import { ActionFunction } from './parser/configParser'
 import { createCommand } from './commands/create'
+import { hasTag } from '../core/filters/hasTag'
+import { unionOf } from '../core/filters/union'
+import { intersectionOf } from '../core/filters/intersection'
 
 const defaultFilePath = path.join(process.cwd(), 'todo.log.yml')
 export const todoFilePath = process.env.TODO_FILE || defaultFilePath
@@ -54,8 +56,18 @@ commander
 commander
   .command('list [<viewName>]')
   .option('available-time', true)
+  .option('only-tags', true)
   .action(({ flags }) => {
     let filter = isIncomplete
+    const onlyTags = flags['only-tags']
+    if (onlyTags) {
+      const tags = onlyTags.split(',')
+      const tagFilters = tags.map(tagName => hasTag({ name: tagName }))
+      if (tagFilters.length) {
+        const union = unionOf(...tagFilters)
+        filter = intersectionOf(filter, union)
+      }
+    }
     return showTreeFromFile(todoFilePath, filter)
   })
 
@@ -67,8 +79,6 @@ commander
       .then(buildStateFromActions)
       .then(todos => todos.filter(filter))
       .then(todos => buildTodoTree(todos))
-      // .then(interactiveFilter)
-      // .then((res) => console.log('got it', res) || res)
       .then(trees => renderTodoTree(trees, true))
       .then(console.log)
       .then(() => undefined)

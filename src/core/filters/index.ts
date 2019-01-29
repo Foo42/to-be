@@ -26,11 +26,8 @@ export function noLongerThan (timeInMinutes: number) {
 
 export type FilterFunc = (todo: Todo) => boolean
 
-export const intersectionOf = (...filters: FilterFunc[]) => (todo: Todo) => {
-  return filters.every(filter => filter(todo))
-}
-
 export type IsTaskCompleteFunc = (id: string) => boolean
+
 export const notBlocked = (isComplete: IsTaskCompleteFunc) => (todo: Todo) => {
   return todo.blockingTaskIds.length === 0 || todo.blockingTaskIds.every(isComplete)
 }

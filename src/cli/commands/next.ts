@@ -2,7 +2,7 @@ import { Todo } from '../../core/todo'
 import { loadActionsFromFile, buildStateFromActions } from '../../file/load'
 import { Dict } from '../parser/configParser'
 import { keyBy } from 'lodash'
-import { isIncomplete, isLeaf, allContextsActive, notBlocked, noLongerThan, intersectionOf } from '../../core/filters'
+import { isIncomplete, isLeaf, allContextsActive, notBlocked, noLongerThan } from '../../core/filters'
 import { isString } from 'util'
 import { buildTodoTree, deepFilterAll, deepSortAll, TreeNode } from '../../core/tree'
 import { summariseActionableTasksWithin } from '../../core/tree/summarisers/actionableWithin'
@@ -15,9 +15,10 @@ import { Config } from '../config/types'
 import { noConflict } from 'bluebird'
 import { summariseScores } from '../../core/tree/summarisers/score'
 import { scoredSorterDesc } from '../../core/sorters/scored'
+import { intersectionOf } from '../../core/filters/intersection'
 
 interface Flags {
-  availableTime?: number
+  availableTime?: number,
   sort: string
 }
 function parseFlags (flags: Dict<any>): Flags {
