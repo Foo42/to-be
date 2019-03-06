@@ -1,4 +1,4 @@
-import { changeTitle, markCompleted, TodoUpdate, addContexts, setEstimate, setParentTask, addTags, setDueDate, addNote, addBlockingTask, markDeleted } from '../../src/core/actions'
+import { changeTitle, markCompleted, TodoUpdate, addContexts, setEstimate, setParentTask, addTags, setDueDate, addNote, addBlockingTask, markDeleted, setBlockedUntil, clearBlockedUntil } from '../../src/core/actions'
 import { assert, expect } from 'chai'
 import { applyListAction } from '../../src/core/evolveList'
 import { todo, Note } from '../../src/core/todo'
@@ -111,6 +111,23 @@ describe('item actions.', () => {
       const original = todo('123', 'do stuff')
       const updated = applyUpdate(original, markDeleted(deleteReason))
       expect(updated.deleted).to.deep.equal({ reason: deleteReason })
+    })
+  })
+
+  describe('setBlockedUntil', () => {
+    it('should set blockedUntil to provided date', () => {
+      const original = todo('123', 'so stuff')
+      const targetDate = new Date('2025-01-13')
+      const updated = applyUpdate(original, setBlockedUntil(targetDate))
+      expect(updated.blockedUntil).to.deep.equal(targetDate)
+    })
+  })
+
+  describe('clearBlockedUntil', () => {
+    it('should clear blockedUntil', () => {
+      const original = { ...todo('123', 'so stuff'), blockedUntil: new Date() }
+      const updated = applyUpdate(original, clearBlockedUntil())
+      expect(updated.blockedUntil).to.deep.equal(undefined)
     })
   })
 })

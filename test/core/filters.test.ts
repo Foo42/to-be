@@ -83,6 +83,23 @@ describe('filters.', () => {
       }
       expect(notBlocked(isTaskComplete)(todo)).to.eql(true)
     })
+
+    it('returns false for todos with "blockedUntil" set to a future date', () => {
+      const futureDate = new Date(Date.now() + 100000)
+      const todo: Todo = {
+        ...baseTodo('someId', 'I am blocked for now'),
+        blockedUntil: futureDate
+      }
+      expect(notBlocked(() => true)(todo)).to.equal(false)
+    })
+    it('returns true for todos with "blockedUntil" set to a date in the past', () => {
+      const futureDate = new Date(Date.now() - 1)
+      const todo: Todo = {
+        ...baseTodo('someId', 'I am no longer blocked'),
+        blockedUntil: futureDate
+      }
+      expect(notBlocked(() => true)(todo)).to.equal(true)
+    })
   })
 
   describe('isLeaf', () => {

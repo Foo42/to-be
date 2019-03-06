@@ -3,6 +3,7 @@ import { TreeNode } from '../core/tree'
 import { flatMap } from 'lodash'
 import chalk from 'chalk'
 import { ScoreSummary } from '../core/tree/summarisers/score'
+import { isBlockedUntilFutureDate } from '../core/filters'
 
 export function renderTodoList (todos: Todo[], showNumbers = false): string {
   return todos.map((todo, i) => {
@@ -36,7 +37,9 @@ function renderTodo (todo: Todo | TreeNode<Todo> | TreeNode<Todo, ScoreSummary>,
   if (todo.complete) {
     checkContents = '✓'
   } else if (todo.blockingTaskIds.length > 0) {
-    checkContents = 'BLOCKED'
+    checkContents = chalk.red('BLOCKED')
+  } else if (isBlockedUntilFutureDate(todo)) {
+    checkContents = chalk.red(`BLOCKED UNTIL ${todo.blockedUntil}`)
   }
   parts.push(`[${checkContents}]`)
 

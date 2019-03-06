@@ -63,6 +63,17 @@ export interface AddBlockingTask {
 }
 export const addBlockingTask = (blockingTaskId: string): AddBlockingTask => ({ type: 'addBlockingTask', taskId: blockingTaskId })
 
+export interface SetBlockedUntil {
+  type: 'setBlockedUntil'
+  date: Date
+}
+export const setBlockedUntil = (date: Date): SetBlockedUntil => ({ type: 'setBlockedUntil', date })
+
+export interface ClearBlockedUntil {
+  type: 'clearBlockedUntil'
+}
+export const clearBlockedUntil = (): ClearBlockedUntil => ({ type: 'clearBlockedUntil' })
+
 export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
   const type = raw.type
   if (!isString(type)) {
@@ -166,9 +177,18 @@ export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
       return addBlockingTask(taskId)
     }
 
+    case 'setBlockedUntil': {
+      const date = ensureDate(raw.date)
+      return setBlockedUntil(date)
+    }
+
+    case 'clearBlockedUntil': {
+      return clearBlockedUntil()
+    }
+
     default:
       throw new Error(`Malformed todo update type: '${type}'`)
   }
 }
 
-export type TodoUpdate = ChangeTitle | MarkCompleted | AddContexts | SetEstimate | SetParentTask | AddTags | SetDueDate | AddNote | AddBlockingTask | MarkDeleted
+export type TodoUpdate = ChangeTitle | MarkCompleted | AddContexts | SetEstimate | SetParentTask | AddTags | SetDueDate | AddNote | AddBlockingTask | MarkDeleted | SetBlockedUntil | ClearBlockedUntil

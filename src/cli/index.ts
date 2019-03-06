@@ -7,7 +7,7 @@ import { Todo } from '../core/todo'
 import { appendActionToFile } from '../file/save'
 import { loadActionsFromFile, buildStateFromActions } from '../file/load'
 import * as path from 'path'
-import { markCompleted, addContexts, changeTitle, setEstimate, setParentTask, addTags, setDueDate, addNote, addBlockingTask, markDeleted } from '../core/actions'
+import { markCompleted, addContexts, changeTitle, setEstimate, setParentTask, addTags, setDueDate, addNote, addBlockingTask, markDeleted, setBlockedUntil } from '../core/actions'
 import { allowAnyTodo, isIncomplete } from '../core/filters/index'
 import * as readline from 'readline'
 import { TreeNode, buildTodoTree } from '../core/tree'
@@ -235,6 +235,23 @@ commander
     const gettingBlockerId = blocker ? Promise.resolve(blocker) : gettingTargetId.then(() => todoIdPicker('blocking todo'))
     return Promise.all([gettingTargetId, gettingBlockerId]).then(([id, blockerId]) => {
       const update = updateItemInList(id, addBlockingTask(blockerId))
+      return appendActionToFile(update, todoFilePath)
+    })
+  })
+
+commander
+  .command('edit set-blocked-until [<date>] [<id>]')
+  .action((options) => {
+    const { date, id } = options.allSubCommands
+    const gettingId = id ? Promise.resolve(id) : todoIdPicker()
+    const gettingBlockedUntilDate = date ? Promise.resolve(date) : gettingId.then(() => promptInput('Blocked until date (iso format)'))
+    return Promise.all([gettingId, gettingBlockedUntilDate]).then(([id, blockedUntilDateString]) => {
+      const blockedUntilDate = new Date(blockedUntilDateString)
+      if (isNaN(blockedUntilDate.getTime())) {
+        console.error('Date parse error')
+        throw new Error('Date parse error')
+      }
+      const update = updateItemInList(id, setBlockedUntil(blockedUntilDate))
       return appendActionToFile(update, todoFilePath)
     })
   })

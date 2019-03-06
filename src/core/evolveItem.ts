@@ -36,6 +36,12 @@ export function applyUpdate (original: Todo, action: TodoUpdate): Todo {
       }
       return { ...original, deleted: {} }
 
+    case 'setBlockedUntil':
+      return { ...original, blockedUntil: action.date }
+
+    case 'clearBlockedUntil':
+      return { ...original, blockedUntil: undefined }
+
     default:
       const x: never = action
       throw new Error('unsupported updated type')

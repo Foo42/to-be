@@ -28,8 +28,13 @@ export type FilterFunc = (todo: Todo) => boolean
 
 export type IsTaskCompleteFunc = (id: string) => boolean
 
+export const isBlockedUntilFutureDate = (todo: Todo): boolean => {
+  return todo.blockedUntil !== undefined && todo.blockedUntil > new Date()
+}
+
 export const notBlocked = (isComplete: IsTaskCompleteFunc) => (todo: Todo) => {
-  return todo.blockingTaskIds.length === 0 || todo.blockingTaskIds.every(isComplete)
+  const notBlockedByOtherTask = todo.blockingTaskIds.length === 0 || todo.blockingTaskIds.every(isComplete)
+  return notBlockedByOtherTask && !isBlockedUntilFutureDate(todo)
 }
 
 export function isLeaf (todo: Todo | TodoTree) {
