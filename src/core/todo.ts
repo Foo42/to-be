@@ -92,7 +92,7 @@ function parseDate (rawDate: string): Date {
 }
 
 export function deserialiseTodo (raw: Dict<any>): Todo {
-  const { id, title, complete, createdAt, contexts, estimateMinutes, parentTaskId, tags, dueDate: rawDueDate, notes = [], blockingTasks = [], waitingOn = [] } = raw
+  const { id, title, complete, createdAt, contexts, estimateMinutes, parentTaskId, tags, dueDate: rawDueDate, notes = [], blockingTasks = [], waitingOn = [], blockedUntil: rawBlockedUntil } = raw
   if (!isString(id)) {
     throw new Error('missing or malformed id')
   }
@@ -121,6 +121,7 @@ export function deserialiseTodo (raw: Dict<any>): Todo {
   if (!isArray(waitingOn)) {
     throw new Error('mis-typed field "waitingOn". Should be array.')
   }
+  const blockedUntil = isUndefined(rawBlockedUntil) ? undefined : ensureDate(rawBlockedUntil)
 
   const parsedCreatedAt = isDate(createdAt) ? createdAt : new Date(Date.parse(createdAt))
   return {
@@ -135,7 +136,8 @@ export function deserialiseTodo (raw: Dict<any>): Todo {
     parentTaskId,
     dueDate,
     blockingTaskIds: parseArray(blockingTasks, parseAsString),
-    waitingOn: parseArray(waitingOn, parseWaitingOnEntry)
+    waitingOn: parseArray(waitingOn, parseWaitingOnEntry),
+    blockedUntil
   }
 }
 
@@ -152,7 +154,8 @@ export function todo (id: string, title: string): Todo {
     parentTaskId: undefined,
     dueDate: undefined,
     blockingTaskIds: [],
-    waitingOn: []
+    waitingOn: [],
+    blockedUntil: undefined
   }
 }
 

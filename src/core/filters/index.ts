@@ -29,7 +29,8 @@ export type FilterFunc = (todo: Todo) => boolean
 export type IsTaskCompleteFunc = (id: string) => boolean
 
 export const isBlockedUntilFutureDate = (todo: Todo): boolean => {
-  return todo.blockedUntil !== undefined && todo.blockedUntil > new Date()
+  console.log(todo.title, 'isBlockedUntilFutureDate', todo.blockedUntil, new Date(), todo.blockedUntil && (todo.blockedUntil > new Date()))
+  return todo.blockedUntil !== undefined && (todo.blockedUntil > new Date())
 }
 
 export const notBlocked = (isComplete: IsTaskCompleteFunc) => (todo: Todo) => {

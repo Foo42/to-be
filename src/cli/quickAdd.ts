@@ -6,6 +6,7 @@ export function quickAddParse (input: string): Todo {
   const contexts = data.filter(s => s.startsWith('@')).map(s => s.substring(1))
   const tags = data.filter(s => s.startsWith('#')).map(s => ({ name: s.substring(1) }))
   const dueDate = extractDueDate(data)
+  const blockedUntil = extractBlockUntilDate(data)
   const estimateMinutes = extractEstimate(data)
 
   return {
@@ -13,12 +14,26 @@ export function quickAddParse (input: string): Todo {
     contexts,
     tags,
     dueDate,
-    estimateMinutes
+    estimateMinutes,
+    blockedUntil
   }
 }
 
 function extractDueDate (parts: string[]): Date | undefined {
   const found = parts.find(s => s.startsWith('due='))
+  if (!found) {
+    return undefined
+  }
+  const dateString = found.split('=')[1]
+  const date = new Date(dateString)
+  if (isNaN(date.getTime())) {
+    throw new Error('Date parse error')
+  }
+  return date
+}
+
+function extractBlockUntilDate (parts: string[]): Date | undefined {
+  const found = parts.find(s => s.startsWith('after='))
   if (!found) {
     return undefined
   }
