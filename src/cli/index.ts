@@ -2,12 +2,12 @@ require('wtfnode')
 import { dump } from 'wtfnode'
 require('source-map-support/register')
 import { Commander } from './parser'
-import { updateItemInList } from '../core/listActions'
+import { updateItemInList, addToList } from '../core/listActions'
 import { Todo } from '../core/todo'
 import { appendActionToFile } from '../file/save'
 import { loadActionsFromFile, buildStateFromActions } from '../file/load'
 import * as path from 'path'
-import { markCompleted, addContexts, changeTitle, setEstimate, setParentTask, addTags, setDueDate, addNote, addBlockingTask, markDeleted, setBlockedUntil } from '../core/actions'
+import { markCompleted, addContexts, changeTitle, setEstimate, setParentTask, addTags, setDueDate, addNote, addBlockingTask, markDeleted, setBlockedUntil, addWaitingOn } from '../core/actions'
 import { allowAnyTodo, isIncomplete } from '../core/filters/index'
 import * as readline from 'readline'
 import { TreeNode, buildTodoTree } from '../core/tree'
@@ -20,6 +20,7 @@ import { createCommand } from './commands/create'
 import { hasTag } from '../core/filters/hasTag'
 import { unionOf } from '../core/filters/union'
 import { intersectionOf } from '../core/filters/intersection'
+import { quickAddParse } from './quickAdd'
 
 const defaultFilePath = path.join(process.cwd(), 'todo.log.yml')
 export const todoFilePath = process.env.TODO_FILE || defaultFilePath
@@ -254,6 +255,21 @@ commander
       const update = updateItemInList(id, setBlockedUntil(blockedUntilDate))
       return appendActionToFile(update, todoFilePath)
     })
+  })
+
+commander
+  .command('edit add-waiting-on [<person>] [<id>]')
+  .action(async (options) => {
+    const id = await (options.allSubCommands.id ? Promise.resolve(options.allSubCommands.id) : todoIdPicker())
+    const name = options.allSubCommands.person || await promptInput('Name of person waiting on: ')
+    const update = updateItemInList(id, addWaitingOn([{ name }]))
+    await appendActionToFile(update, todoFilePath)
+    const shouldAddChaser = (await promptInput('Would you like to add a chase up task? (y/n)')).toLowerCase().startsWith('y')
+    if (shouldAddChaser) {
+      const chaserTask: Todo = { ...quickAddParse(await promptInput('Chase up: ')), parentTaskId: id }
+      await appendActionToFile(addToList(chaserTask), todoFilePath)
+    }
+    return showTreeFromFile(todoFilePath)
   })
 
 function promptInput (question: string): Promise<string> {

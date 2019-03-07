@@ -19,6 +19,7 @@ export interface Todo {
   blockingTaskIds: string[]
   deleted?: {reason?: string}
   blockedUntil?: Date
+  waitingOn: {name: string}[]
 }
 
 function parseContexts (rawContexts: any): string[] {
@@ -91,7 +92,7 @@ function parseDate (rawDate: string): Date {
 }
 
 export function deserialiseTodo (raw: Dict<any>): Todo {
-  const { id, title, complete, createdAt, contexts, estimateMinutes, parentTaskId, tags, dueDate: rawDueDate, notes = [], blockingTasks = [] } = raw
+  const { id, title, complete, createdAt, contexts, estimateMinutes, parentTaskId, tags, dueDate: rawDueDate, notes = [], blockingTasks = [], waitingOn = [] } = raw
   if (!isString(id)) {
     throw new Error('missing or malformed id')
   }
@@ -117,6 +118,9 @@ export function deserialiseTodo (raw: Dict<any>): Todo {
   if (!isArray(blockingTasks)) {
     throw new Error('mis-typed field "blockingTasks". Should be array.')
   }
+  if (!isArray(waitingOn)) {
+    throw new Error('mis-typed field "waitingOn". Should be array.')
+  }
 
   const parsedCreatedAt = isDate(createdAt) ? createdAt : new Date(Date.parse(createdAt))
   return {
@@ -130,7 +134,8 @@ export function deserialiseTodo (raw: Dict<any>): Todo {
     estimateMinutes,
     parentTaskId,
     dueDate,
-    blockingTaskIds: parseArray(blockingTasks, parseAsString)
+    blockingTaskIds: parseArray(blockingTasks, parseAsString),
+    waitingOn: parseArray(waitingOn, parseWaitingOnEntry)
   }
 }
 
@@ -146,10 +151,22 @@ export function todo (id: string, title: string): Todo {
     estimateMinutes: undefined,
     parentTaskId: undefined,
     dueDate: undefined,
-    blockingTaskIds: []
+    blockingTaskIds: [],
+    waitingOn: []
   }
 }
 
 export function generateId () {
   return Guid.raw()
+}
+
+function parseWaitingOnEntry (item: any): {name: string} {
+  if (!isDict(item)) {
+    throw new Error('Malformed waiting on array entry')
+  }
+  const { name } = item
+  if (!isString(name)) {
+    throw new Error('Malformed waiting on array entry. Missing or mis-typed field "name"')
+  }
+  return { name }
 }

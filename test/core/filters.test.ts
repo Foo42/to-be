@@ -100,6 +100,11 @@ describe('filters.', () => {
       }
       expect(notBlocked(() => true)(todo)).to.equal(true)
     })
+
+    it('returns false for todos with people in the waitingOn list', () => {
+      const todo: Todo = { ...baseTodo('some id', 'I am waiting on people'), waitingOn: [{ name: 'Mr Slow' }] }
+      expect(notBlocked(() => true)(todo)).to.equal(false)
+    })
   })
 
   describe('isLeaf', () => {

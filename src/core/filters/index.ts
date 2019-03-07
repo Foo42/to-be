@@ -34,7 +34,7 @@ export const isBlockedUntilFutureDate = (todo: Todo): boolean => {
 
 export const notBlocked = (isComplete: IsTaskCompleteFunc) => (todo: Todo) => {
   const notBlockedByOtherTask = todo.blockingTaskIds.length === 0 || todo.blockingTaskIds.every(isComplete)
-  return notBlockedByOtherTask && !isBlockedUntilFutureDate(todo)
+  return notBlockedByOtherTask && !isBlockedUntilFutureDate(todo) && todo.waitingOn.length === 0
 }
 
 export function isLeaf (todo: Todo | TodoTree) {

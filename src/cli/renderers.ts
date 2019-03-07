@@ -40,6 +40,8 @@ function renderTodo (todo: Todo | TreeNode<Todo> | TreeNode<Todo, ScoreSummary>,
     checkContents = chalk.red('BLOCKED')
   } else if (isBlockedUntilFutureDate(todo)) {
     checkContents = chalk.red(`BLOCKED UNTIL ${todo.blockedUntil}`)
+  } else if (todo.waitingOn.length > 0) {
+    checkContents = chalk.yellow(`Waiting on ${todo.waitingOn.map(person => person.name).join(', ')}`)
   }
   parts.push(`[${checkContents}]`)
 
