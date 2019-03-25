@@ -80,6 +80,12 @@ export type AddWaitingOn = {
 }
 export const addWaitingOn = (waitingOn: {name: string}[]): AddWaitingOn => ({ type: 'addWaitingOn', waitingOn })
 
+export type RemoveWaitingOn = {
+  type: 'removeWaitingOn'
+  waitingOn: {name: string}[]
+}
+export const removeWaitingOn = (waitingOn: {name: string}[]): RemoveWaitingOn => ({ type: 'removeWaitingOn', waitingOn })
+
 export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
   const type = raw.type
   if (!isString(type)) {
@@ -197,7 +203,7 @@ export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
       if (!isArray(rawWaitingOn)) {
         throw new Error('Malformed addWaitingOn. Missing or mis-typed field "waitingOn"')
       }
-      const newWaitingOnList = rawWaitingOn.map(rawWaitingOn => {
+      const parsedList = rawWaitingOn.map(rawWaitingOn => {
         if (!isDict(rawWaitingOn)) {
           throw new Error('Malformed tag in array')
         }
@@ -207,7 +213,25 @@ export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
         }
         throw new Error('non-string tag name in array')
       })
-      return addWaitingOn(newWaitingOnList)
+      return addWaitingOn(parsedList)
+    }
+
+    case 'removeWaitingOn': {
+      const rawWaitingOn = raw.waitingOn
+      if (!isArray(rawWaitingOn)) {
+        throw new Error('Malformed removeWaitingOn. Missing or mis-typed field "waitingOn"')
+      }
+      const parsedList = rawWaitingOn.map(rawWaitingOn => {
+        if (!isDict(rawWaitingOn)) {
+          throw new Error('Malformed tag in array')
+        }
+        const rawName = rawWaitingOn.name
+        if (isString(rawName)) {
+          return { name: rawName }
+        }
+        throw new Error('non-string tag name in array')
+      })
+      return removeWaitingOn(parsedList)
     }
 
     default:
@@ -215,4 +239,4 @@ export function deserialiseTodoUpdate (raw: Dict<any>): TodoUpdate {
   }
 }
 
-export type TodoUpdate = ChangeTitle | MarkCompleted | AddContexts | SetEstimate | SetParentTask | AddTags | SetDueDate | AddNote | AddBlockingTask | MarkDeleted | SetBlockedUntil | ClearBlockedUntil | AddWaitingOn
+export type TodoUpdate = ChangeTitle | MarkCompleted | AddContexts | SetEstimate | SetParentTask | AddTags | SetDueDate | AddNote | AddBlockingTask | MarkDeleted | SetBlockedUntil | ClearBlockedUntil | AddWaitingOn | RemoveWaitingOn

@@ -45,6 +45,9 @@ export function applyUpdate (original: Todo, action: TodoUpdate): Todo {
     case 'addWaitingOn':
       return { ...original, waitingOn: [...original.waitingOn, ...action.waitingOn] }
 
+    case 'removeWaitingOn':
+      return { ...original, waitingOn: original.waitingOn.filter(waitingOn => !action.waitingOn.find(toRemove => toRemove.name === waitingOn.name)) }
+
     default:
       const x: never = action
       throw new Error('unsupported updated type')

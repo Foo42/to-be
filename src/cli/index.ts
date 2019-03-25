@@ -7,7 +7,7 @@ import { Todo } from '../core/todo'
 import { appendActionToFile } from '../file/save'
 import { loadActionsFromFile, buildStateFromActions } from '../file/load'
 import * as path from 'path'
-import { markCompleted, addContexts, changeTitle, setEstimate, setParentTask, addTags, setDueDate, addNote, addBlockingTask, markDeleted, setBlockedUntil, addWaitingOn } from '../core/actions'
+import { markCompleted, addContexts, changeTitle, setEstimate, setParentTask, addTags, setDueDate, addNote, addBlockingTask, markDeleted, setBlockedUntil, addWaitingOn, removeWaitingOn } from '../core/actions'
 import { allowAnyTodo, isIncomplete } from '../core/filters/index'
 import * as readline from 'readline'
 import { TreeNode, buildTodoTree } from '../core/tree'
@@ -269,6 +269,16 @@ commander
       const chaserTask: Todo = { ...quickAddParse(await promptInput('Chase up: ')), parentTaskId: id }
       await appendActionToFile(addToList(chaserTask), todoFilePath)
     }
+    return showTreeFromFile(todoFilePath)
+  })
+
+commander
+  .command('edit remove-waiting-on [<person>] [<id>]')
+  .action(async (options) => {
+    const id = await (options.allSubCommands.id ? Promise.resolve(options.allSubCommands.id) : todoIdPicker())
+    const name = options.allSubCommands.person || await promptInput('Name of person to remove waiting on: ')
+    const update = updateItemInList(id, removeWaitingOn([{ name }]))
+    await appendActionToFile(update, todoFilePath)
     return showTreeFromFile(todoFilePath)
   })
 

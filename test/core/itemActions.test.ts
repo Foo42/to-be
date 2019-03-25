@@ -1,4 +1,4 @@
-import { changeTitle, markCompleted, TodoUpdate, addContexts, setEstimate, setParentTask, addTags, setDueDate, addNote, addBlockingTask, markDeleted, setBlockedUntil, clearBlockedUntil, addWaitingOn } from '../../src/core/actions'
+import { changeTitle, markCompleted, TodoUpdate, addContexts, setEstimate, setParentTask, addTags, setDueDate, addNote, addBlockingTask, markDeleted, setBlockedUntil, clearBlockedUntil, addWaitingOn, removeWaitingOn } from '../../src/core/actions'
 import { assert, expect } from 'chai'
 import { applyListAction } from '../../src/core/evolveList'
 import { todo, Note } from '../../src/core/todo'
@@ -138,6 +138,16 @@ describe('item actions.', () => {
 
       const updated = applyUpdate(original, addWaitingOn([{ name: 'Sue' }, { name: 'Keith' }]))
       assert.deepEqual(updated.waitingOn, [{ name: 'Bob' }, { name: 'Mary' }, { name: 'Sue' }, { name: 'Keith' }])
+    })
+  })
+
+  describe('removeWaitingOn', () => {
+    it('should evolve item to remove given people', () => {
+      const original = todo('123', 'do stuff')
+      original.waitingOn = [{ name: 'Bob' }, { name: 'Mary' }]
+
+      const updated = applyUpdate(original, removeWaitingOn([{ name: 'Mary' }, { name: 'Keith' }]))
+      assert.deepEqual(updated.waitingOn, [{ name: 'Bob' }])
     })
   })
 })
