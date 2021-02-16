@@ -43,7 +43,6 @@ export function loadConfigFromFile (filePath: string): Promise<Config> {
   return readFile(filePath, 'utf8')
     .then(loadConfigFromYamlString)
     .then(loaded => {
-      // console.log(`Loaded:`, loaded)
       return loaded
     })
 }

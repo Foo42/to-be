@@ -1,5 +1,3 @@
-require('wtfnode')
-import { dump } from 'wtfnode'
 require('source-map-support/register')
 import { Commander } from './parser'
 import { updateItemInList, addToList } from '../core/listActions'
@@ -88,7 +86,6 @@ commander
 commander
   .command('pick [<id>]')
   .action((options) => {
-    dump()
     const id = options.allSubCommands.id
     console.log('id', id, typeof (id))
     const gettingId = id ? Promise.resolve(id) : todoIdPicker()
@@ -96,8 +93,6 @@ commander
       process.stdin.setRawMode!(false)
       console.log('picked:', id)
       process.stdin.eventNames().forEach(name => console.log(name, process.stdin.listeners(name)))
-      console.log('final dump')
-      dump()
     }).catch(console.error)
   })
 

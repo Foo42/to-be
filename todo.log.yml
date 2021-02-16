@@ -802,3 +802,22 @@
     notes: []
     blockingTaskIds: []
   time: 2019-01-25T07:46:27.691Z
+- type: addToList
+  item:
+    id: d958ab5e-8158-caa9-7791-be8bc13672e8
+    title: next view should not show projects with no actionable children
+    complete: false
+    createdAt: 2020-03-20T08:50:30.408Z
+    contexts: []
+    tags: []
+    notes: []
+    blockingTaskIds: []
+    waitingOn: []
+  time: 2020-03-20T08:50:30.408Z
+- type: updateItem
+  id: d958ab5e-8158-caa9-7791-be8bc13672e8
+  update:
+    type: addTags
+    tags:
+      - name: bug
+  time: 2020-03-20T08:50:46.565Z
