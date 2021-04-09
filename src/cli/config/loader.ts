@@ -1,9 +1,9 @@
 import { readFile } from 'fs-extra'
 import { Config } from './types'
-import { safeLoad } from 'js-yaml'
+import { load as loadYaml } from 'js-yaml'
 import { isDict } from '../../util/deserialising'
 import { Dict } from '../../cli/parser/configParser'
-import { map, mapValues } from 'lodash'
+import { mapValues } from 'lodash'
 import { isNumber } from 'util'
 
 export function dictToConfig (raw: Dict<any>): Config {
@@ -31,7 +31,7 @@ export function dictToConfig (raw: Dict<any>): Config {
 }
 
 export function loadConfigFromYamlString (yaml: string): Config {
-  const loaded = safeLoad(yaml)
+  const loaded = loadYaml(yaml)
   if (isDict(loaded)) {
     return dictToConfig(loaded)
   }

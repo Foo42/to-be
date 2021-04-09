@@ -2,9 +2,8 @@ import { applyListAction } from '../core/evolveList'
 import { ListAction, deserialiseListAction } from '../core/listActions'
 import { Todo } from '../core/todo'
 import { readFile } from 'fs-extra'
-import { safeLoad } from 'js-yaml'
+import { load } from 'js-yaml'
 import { isArray } from 'util'
-import * as bluebird from 'bluebird'
 import { isNotDeleted } from '../core/filters'
 
 export function buildStateFromActions (actions: ListAction[]): Todo[] {
@@ -12,7 +11,7 @@ export function buildStateFromActions (actions: ListAction[]): Todo[] {
 }
 
 export function loadActionsFromYamlString (yaml: string): ListAction[] {
-  const loaded = safeLoad(yaml)
+  const loaded = load(yaml)
   if (isArray(loaded)) {
     return loaded.map(deserialiseListAction)
   }

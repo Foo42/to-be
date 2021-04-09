@@ -16,7 +16,7 @@ export function renderTodoTree (todos: (TreeNode<Todo> | TreeNode<Todo, ScoreSum
   return preRenderTodoTree(todos, '', showNumbers ? '#' : '').join('\n')
 }
 
-function preRenderTodoTree (todos: (TreeNode<Todo>[] | TreeNode<Todo, ScoreSummary>), currentIndent = '', numberingPrefix = ''): string[] {
+function preRenderTodoTree (todos: (TreeNode<Todo> | TreeNode<Todo, ScoreSummary>)[], currentIndent = '', numberingPrefix = ''): string[] {
   const indentUnit = '  '
   const isTopLevel = currentIndent === ''
   return flatMap(todos, (todo, i) => {

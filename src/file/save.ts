@@ -1,9 +1,9 @@
 import { writeFile, appendFile } from 'fs-extra'
 import { ListAction } from '../core/listActions'
-import { safeDump } from 'js-yaml'
+import { dump } from 'js-yaml'
 
 export function saveActionsToYamlString (actions: ListAction[]): string {
-  return safeDump(actions, { skipInvalid: true })
+  return dump(actions, { skipInvalid: true })
 }
 
 export function saveActionsToFile (actions: ListAction[], filePath: string): Promise<void> {

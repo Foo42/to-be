@@ -1,5 +1,3 @@
-import { Sorter } from '../tree'
-
 export type Sorter<T> = (left: T, right: T) => number
 export function sortBy<RequiredForSortingT> (sorter: Sorter<RequiredForSortingT>) {
   return {
