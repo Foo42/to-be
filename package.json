@@ -41,7 +41,7 @@
     "ansi-escapes": "^3.1.0",
     "bluebird": "^3.5.1",
     "chalk": "^2.3.2",
-    "chrono-node": "^1.4.4",
+    "chrono-node": "^2.2.4",
     "commander": "^2.14.1",
     "fs-extra": "^5.0.0",
     "guid": "0.0.12",
